@@ -106,7 +106,7 @@ This script requires some data about your car that's not available in the PTS GU
 1. Clear the DevTools Network pane (click on the trash can or circle with a line through it)
 2. Click the Wiring tab at the top of PTS.
 3. Filter for the GET request to this URL: `https://www.fordservicecontent.com/Ford_Content/PublicationRuntimeRefreshPTS//wiring/TableofContent` (there are query params at the end, that's ok). It should look similar to the request in [this photo](img/wiring-request.png).
-   - Make sure that "Content" in the url is SINGULAR: `TableOfContent`, not `TableOfContent`**`s`**
+   - Make sure that "Content" in the url is SINGULAR: `TableOfContent`, not `TableOfContents`
 4. Copy the `environment`, `bookType`, and `languageCode` query params into `.wiring` in `params.json`.
    - If `WiringBookTitle` or `WiringBookCode` are still missing, you may need to select a wiring manual. After selecting a manual, you'll find these in another request to `https://www.fordtechservice.dealerconnection.com/wiring/TableOfContents` (with some query params at the end):
    - `booktitle` → `WiringBookTitle`
@@ -114,7 +114,7 @@ This script requires some data about your car that's not available in the PTS GU
    - Use these two requests to fill in `params.json` as best as you can.
 5. Save `params.json`.
 6. Filter for the GET request to this URL: `https://www.fordtechservice.dealerconnection.com/wiring/TableOfContents` (there are query params at the end, that's ok).
-   - Unlike last time, make sure "Contents" in the url is PLURAL: `TableOfContent`**`s`**, not `TableOfContent`
+   - Unlike last time, make sure "Contents" in the url is PLURAL: `TableOfContents`, not `TableOfContent`
 7. Go to the request headers and find the **Cookie:** entry.
    - **Firefox users:** You MUST enable the **Raw** toggle in the top right of the Request Headers panel **before copying**. If you skip this step, Firefox reformats the cookies and you will get an invalid character error when the script runs. This is easy to miss — do it before you select any text.
 8. Copy the cookies from this request (triple-click to select all) and paste into `templates/cookieString.txt`.
