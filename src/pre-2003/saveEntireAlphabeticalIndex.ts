@@ -1,7 +1,7 @@
 import { Page } from "playwright";
 import { join, resolve } from "path";
+import { writeFile, unlink } from "fs/promises";
 import { fileExists, sanitizeName } from "../utils";
-import { writeFile } from "fs/promises";
 import type { Pre2003AlphabeticalIndex } from "./fetchAlphabeticalIndex";
 import type { SaveOptions } from "../workshop/saveEntireManual";
 
@@ -20,11 +20,20 @@ export default async function saveEntirePre2003AlphabeticalIndex(
       continue;
     }
 
-    const pdfPath = join(outputPath, `/${filename}.pdf`);
+    const htmlPath = resolve(join(outputPath, `/${filename}.html`));
+    const pdfPath = resolve(join(outputPath, `/${filename}.pdf`));
 
-    if (await fileExists(pdfPath)) {
-      console.log(`Skipping ${title} because it already exists.`);
-      continue;
+    // Skip check based on output mode
+    if (options.pdfOnly) {
+      if (await fileExists(pdfPath)) {
+        console.log(`Skipping ${title} because it already exists.`);
+        continue;
+      }
+    } else {
+      if (await fileExists(htmlPath)) {
+        console.log(`Skipping ${title} because it already exists.`);
+        continue;
+      }
     }
 
     console.log(`Saving ${title}...`);
@@ -33,13 +42,15 @@ export default async function saveEntirePre2003AlphabeticalIndex(
         waitUntil: "load",
       });
 
-      await browserPage.pdf({
-        path: pdfPath,
-      });
+      // Always save HTML first
+      await writeFile(htmlPath, await browserPage.content());
 
-      if (options.saveHTML) {
-        const htmlPath = resolve(join(outputPath, `/${filename}.html`));
-        await writeFile(htmlPath, await browserPage.content());
+      if (options.savePDF) {
+        await browserPage.pdf({ path: pdfPath });
+
+        if (options.pdfOnly) {
+          await unlink(htmlPath);
+        }
       }
     } catch (e) {
       if (options.ignoreSaveErrors) {

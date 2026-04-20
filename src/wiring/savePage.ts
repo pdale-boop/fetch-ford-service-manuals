@@ -8,7 +8,7 @@ import {
 import fetchSvg from "./fetchSvg";
 import { join, resolve } from "path";
 import { writeFile, unlink } from "fs/promises";
-import { existsSync } from "fs";
+import { existsSync, readdirSync } from "fs";
 import { sanitizeName } from "../utils";
 import fetchBasicPage from "./fetchBasicPage";
 import { SaveOptions } from "../workshop/saveEntireManual";
@@ -38,6 +38,9 @@ export default async function savePage(
     join(folderPath, "pageList.json"),
     JSON.stringify(pageList, null, 2)
   );
+
+  // Read directory once so skip checks don't re-stat on every page
+  const existingFiles = readdirSync(folderPath);
 
   for (const subPage of pageList) {
     console.log(`Saving page ${subPage} of ${doc.Title}...`);
@@ -83,22 +86,16 @@ export default async function savePage(
       continue;
     }
 
+    // String subPage: final filename is unknown until after SVG fetch (title gets appended).
+    // Use the directory snapshot to check for any existing file starting with this subPage.
     const svgBaseName = subPage;
-    const pdfPath = join(folderPath, `${svgBaseName}.pdf`);
-
-    // Skip check depends on output mode.
-    // In pdf/pdfonly mode, check for the PDF.
-    // In default HTML mode, check for any SVG starting with svgBaseName
-    // (the title gets appended after fetch, so we can't predict the exact filename).
-    if (options.savePDF || options.pdfOnly) {
-      if (existsSync(pdfPath)) {
+    if (options.pdfOnly) {
+      if (existingFiles.some(f => f.startsWith(svgBaseName) && f.endsWith(".pdf"))) {
         console.log(`Skipping already downloaded: ${svgBaseName}`);
         continue;
       }
     } else {
-      const { readdirSync } = require("fs");
-      const files = readdirSync(folderPath) as string[];
-      if (files.some((f: string) => f.startsWith(svgBaseName) && f.endsWith(".svg"))) {
+      if (existingFiles.some(f => f.startsWith(svgBaseName) && f.endsWith(".svg"))) {
         console.log(`Skipping already downloaded: ${svgBaseName}`);
         continue;
       }
