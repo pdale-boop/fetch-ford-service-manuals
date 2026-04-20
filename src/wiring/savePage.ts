@@ -86,16 +86,19 @@ export default async function savePage(
     const svgBaseName = subPage;
     const pdfPath = join(folderPath, `${svgBaseName}.pdf`);
 
-    // For string subPages, skip check is based on output mode
-    if (options.pdfOnly) {
+    // Skip check depends on output mode.
+    // In pdf/pdfonly mode, check for the PDF.
+    // In default HTML mode, check for any SVG starting with svgBaseName
+    // (the title gets appended after fetch, so we can't predict the exact filename).
+    if (options.savePDF || options.pdfOnly) {
       if (existsSync(pdfPath)) {
         console.log(`Skipping already downloaded: ${svgBaseName}`);
         continue;
       }
     } else {
-      // In default HTML mode, we won't know the final SVG filename until after
-      // fetch, so use PDF path as fallback skip check
-      if (existsSync(pdfPath)) {
+      const { readdirSync } = require("fs");
+      const files = readdirSync(folderPath) as string[];
+      if (files.some((f: string) => f.startsWith(svgBaseName) && f.endsWith(".svg"))) {
         console.log(`Skipping already downloaded: ${svgBaseName}`);
         continue;
       }
