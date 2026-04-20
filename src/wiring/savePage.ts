@@ -7,9 +7,11 @@ import {
 } from "./fetchTableOfContents";
 import fetchSvg from "./fetchSvg";
 import { join, resolve } from "path";
-import { writeFile } from "fs/promises";
+import { writeFile, unlink } from "fs/promises";
+import { existsSync } from "fs";
 import { sanitizeName } from "../utils";
 import fetchBasicPage from "./fetchBasicPage";
+import { SaveOptions } from "../workshop/saveEntireManual";
 
 export interface WiringFetchPageParams extends WiringFetchParams {
   vehicleId: string;
@@ -22,11 +24,9 @@ export default async function savePage(
     | (WiringTableOfContentsEntry & { Type: "Page" })
     | (WiringTableOfContentsEntry & { Type: "BasicPage" }),
   browserPage: Page,
-  folderPath: string
+  folderPath: string,
+  options: SaveOptions = { savePDF: false, pdfOnly: false, ignoreSaveErrors: false }
 ): Promise<void> {
-  // Need pageList per docNumber
-  // Page lists for "Page" type documents is returned as ["001, "002", "003", etc]
-
   const pageList = await fetchPageList({
     ...params,
     cell: doc.Number,
@@ -43,11 +43,62 @@ export default async function savePage(
     console.log(`Saving page ${subPage} of ${doc.Title}...`);
 
     if (typeof subPage !== "string") {
-      // page is a BasicPagePageListItem, download PDF
-      const pdfPath = join(folderPath, `${subPage.Text}.pdf`);
+      // Ford API returned object instead of string - extract cell/page and treat as SVG page
+      const cell = (subPage as any).cell as string;
+      const page = (subPage as any).page as string;
+      if (!cell || !page) {
+        console.error("Unrecognized subPage format:", JSON.stringify(subPage));
+        continue;
+      }
+      const svgPath = join(folderPath, `${cell}_${page}.svg`);
+      const pdfPath = join(folderPath, `${cell}_${page}.pdf`);
 
-      await fetchBasicPage(pdfPath, params.book);
+      // Skip if already downloaded
+      if (options.pdfOnly) {
+        if (existsSync(pdfPath)) {
+          console.log(`Skipping already downloaded: ${cell}_${page}`);
+          continue;
+        }
+      } else {
+        if (existsSync(svgPath)) {
+          console.log(`Skipping already downloaded: ${cell}_${page}`);
+          continue;
+        }
+      }
+
+      const svg = await fetchSvg(
+        cell, page, params.environment, params.vehicleId,
+        params.book, params.languageCode
+      );
+      await writeFile(svgPath, svg);
+
+      if (options.savePDF) {
+        await browserPage.goto(`file:///${resolve(svgPath)}`);
+        await browserPage.pdf({ path: pdfPath, landscape: true });
+
+        if (options.pdfOnly) {
+          await unlink(svgPath);
+        }
+      }
       continue;
+    }
+
+    const svgBaseName = subPage;
+    const pdfPath = join(folderPath, `${svgBaseName}.pdf`);
+
+    // For string subPages, skip check is based on output mode
+    if (options.pdfOnly) {
+      if (existsSync(pdfPath)) {
+        console.log(`Skipping already downloaded: ${svgBaseName}`);
+        continue;
+      }
+    } else {
+      // In default HTML mode, we won't know the final SVG filename until after
+      // fetch, so use PDF path as fallback skip check
+      if (existsSync(pdfPath)) {
+        console.log(`Skipping already downloaded: ${svgBaseName}`);
+        continue;
+      }
     }
 
     const svg = await fetchSvg(
@@ -59,7 +110,7 @@ export default async function savePage(
       params.languageCode
     );
 
-    // parse the SVG into a DOM for manipulation
+    // Parse the SVG into a DOM for manipulation
     const dom = new JSDOM(svg);
     const svgElement = dom.window.document.querySelector("svg");
     if (!svgElement) {
@@ -87,14 +138,14 @@ export default async function savePage(
     const svgPath = join(folderPath, `${title}.svg`);
     await writeFile(svgPath, svgString);
 
-    // Print as PDF
-    const pdfPath = join(folderPath, `${title}.pdf`);
+    if (options.savePDF) {
+      const finalPdfPath = join(folderPath, `${title}.pdf`);
+      await browserPage.goto(`file:///${resolve(svgPath)}`);
+      await browserPage.pdf({ path: finalPdfPath, landscape: true });
 
-    // can't use getSvgUrl here because the SVG is too big
-    await browserPage.goto(`file:///${resolve(svgPath)}`);
-    await browserPage.pdf({
-      path: pdfPath,
-      landscape: true,
-    });
+      if (options.pdfOnly) {
+        await unlink(svgPath);
+      }
+    }
   }
 }

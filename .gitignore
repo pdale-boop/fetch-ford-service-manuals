@@ -130,3 +130,6 @@ dist
 .idea/
 
 manuals/
+*.bak
+patchConnectorSvgs.ts
+src.textClipping

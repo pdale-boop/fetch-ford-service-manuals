@@ -9,7 +9,8 @@ export interface CLIArgs {
   doWiringDownload: boolean;
   doParamsValidation: boolean;
   doCookieTest: boolean;
-  saveHTML: boolean;
+  savePDF: boolean;
+  pdfOnly: boolean;
   ignoreSaveErrors: boolean;
 }
 
@@ -51,7 +52,12 @@ export default function processCLIArgs(): CLIArgs {
       default: false,
     },
     {
-      name: "saveHTML",
+      name: "pdf",
+      type: Boolean,
+      default: false,
+    },
+    {
+      name: "pdfonly",
       type: Boolean,
       default: false,
     },
@@ -115,16 +121,22 @@ export default function processCLIArgs(): CLIArgs {
             "Skip trying to log into PTS before downloading manuals.",
         },
         {
-          name: "saveHTML",
+          name: "pdf",
           typeLabel: " ",
           description:
-            "Save .html files along with .pdf files. Default: false.",
+            "Generate PDF files in addition to HTML. Both HTML and PDF are kept. Default: false.",
+        },
+        {
+          name: "pdfonly",
+          typeLabel: " ",
+          description:
+            "Generate PDF files only. HTML files are deleted after PDF generation. Default: false.",
         },
         {
           name: "ignoreSaveErrors",
           typeLabel: " ",
           description:
-            "Ignore errors and continue downloading the manual when there's an error saving or PDF-ing a page. Default: false.",
+            "Ignore errors and continue downloading when there's an error saving a page. Default: false.",
         },
         {
           name: "help",
@@ -146,10 +158,10 @@ export default function processCLIArgs(): CLIArgs {
 
     if (!options.configFile || !options.outputPath || !options.cookieString) {
       console.error("Missing required args!");
-      // console.log(options);
       console.log(usage);
       process.exit(1);
     }
+
     return {
       configPath: options.configFile,
       outputPath: options.outputPath,
@@ -158,7 +170,8 @@ export default function processCLIArgs(): CLIArgs {
       doWiringDownload: !options.noWiring,
       doParamsValidation: !options.noParamsValidation,
       doCookieTest: !options.noCookieTest,
-      saveHTML: !!options.saveHTML,
+      savePDF: !!options.pdf || !!options.pdfonly,
+      pdfOnly: !!options.pdfonly,
       ignoreSaveErrors: !!options.ignoreSaveErrors,
     };
   } catch (e: any) {

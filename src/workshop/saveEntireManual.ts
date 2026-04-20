@@ -1,4 +1,5 @@
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir, writeFile, unlink } from "fs/promises";
+import { existsSync } from "fs";
 import { join, resolve } from "path";
 import fetchManualPage, { FetchManualPageParams } from "./fetchManualPage";
 import client from "../client";
@@ -6,7 +7,7 @@ import { Page } from "playwright";
 import { CLIArgs } from "../processCLIArgs";
 import saveStream, { sanitizeName } from "../utils";
 
-export type SaveOptions = Pick<CLIArgs, "saveHTML" | "ignoreSaveErrors">;
+export type SaveOptions = Pick<CLIArgs, "savePDF" | "pdfOnly" | "ignoreSaveErrors">;
 
 export default async function saveEntireManual(
   path: string,
@@ -45,23 +46,18 @@ export default async function saveEntireManual(
         continue;
       }
 
-      console.log(
-        `Downloading manual page ${name} as ${
-          options.saveHTML ? "HTML, " : ""
-        }PDF (docID: ${docID})`
-      );
+      console.log(`Downloading manual page ${name} (docID: ${docID})`);
       let filename = sanitizeName(name);
-      // 255 is the max filename length on most filesystems, but 200 should be enough regardless
       if (filename.length > 200) {
         filename =
-          // 255 = max filename length, 18 = length of " ( truncated).html",
-          // docID.length = length of docID
-
-          // including the docID in the filename to prevent collisions as names may differ
-          // at the end rather than in the first ~255 characters
           filename.slice(0, 254 - 19 - docID.length) + ` (${docID} truncated)`;
-
         console.log(`-> Truncating filename, learn more in the README`);
+      }
+
+      const htmlPath = resolve(join(path, `/${filename}.html`));
+      if (existsSync(htmlPath)) {
+        console.log(`Skipping already downloaded: ${name}`);
+        continue;
       }
 
       try {
@@ -70,20 +66,19 @@ export default async function saveEntireManual(
           searchNumber: docID,
         });
 
-        if (options.saveHTML) {
-          const htmlPath = resolve(join(path, `/${filename}.html`));
-          await writeFile(htmlPath, pageHTML);
-        }
+        // Always save HTML first
+        await writeFile(htmlPath, pageHTML);
 
-        await browserPage.setContent(pageHTML, { waitUntil: "load" });
-        // removes this little color-coded thing that doesn't load properly
-        // in Playwright, just says "Workshop Manual Graphics Training"...
-        await browserPage.evaluate(
-          'document.querySelectorAll("body > div > table > tbody > tr > td:nth-child(2)").forEach(e => e.remove())'
-        );
-        await browserPage.pdf({
-          path: join(path, `/${filename}.pdf`),
-        });
+        if (options.savePDF) {
+          const pdfPath = resolve(join(path, `/${filename}.pdf`));
+          await browserPage.goto(`file://${htmlPath}`, { waitUntil: "load" });
+          await browserPage.pdf({ path: pdfPath });
+
+          // pdfOnly: delete HTML after PDF generation
+          if (options.pdfOnly) {
+            await unlink(htmlPath);
+          }
+        }
       } catch (e) {
         if (options.ignoreSaveErrors) {
           console.error(
@@ -121,14 +116,3 @@ export default async function saveEntireManual(
     }
   }
 }
-
-// export async function saveURLAsPDF(
-//   htmlPath: string,
-//   pdfPath: string,
-//   page: Page
-// ): Promise<void> {
-//   await page.goto(`file://${htmlPath}`, { waitUntil: "load" });
-//   await page.pdf({
-//     path: pdfPath,
-//   });
-// }
