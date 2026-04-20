@@ -34,19 +34,22 @@ While this script has been verified to work on Windows natively (see [issue #6](
 
 WSL is a way to run Linux (Ubuntu is recommended for this project) in tandem with Windows. It's far faster than a virtual machine but still uses the real Linux kernel. Learn more and see install instructions [here](https://learn.microsoft.com/en-us/windows/wsl/install).
 
-### Set up Node (>16.3) and Yarn
+### Set up Node (>16.3)
 
-1. Install Node.js 16.3 or newer (with `corepack`)
-2. Run `corepack enable`
+1. Install Node.js 16.3 or newer from [nodejs.org](https://nodejs.org/)
+
+> **Note:** This fork uses `npm` instead of Yarn. The upstream project uses Yarn Berry (no `node_modules` folder), but this fork switches to `npm` for broader compatibility and simpler setup — no `corepack` required.
 
 ### Get code and dependencies
 
 1. Clone this repository with `git clone https://github.com/pdale-boop/fetch-ford-service-manuals.git`, and enter the repository's directory (likely with `cd fetch-ford-service-manuals`)
    - Previously cloned? Run `git pull` to get up to date!
-   - If `git pull` does **not** say `Already up to date.`, run the next 2 steps to ensure your dependencies are up-to-date.
+   - If `git pull` does **not** say `Already up to date.`, run the next step to ensure your dependencies are up-to-date.
    - If you get an error while pulling, try running `git stash`, `git pull`, then `git stash apply` to un-stash your files.
-2. Run `yarn` to download dependencies
-3. Run `yarn playwright-setup` to download and set up Playwright
+2. Run `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm install` to download dependencies
+   - The `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true` flag skips downloading a bundled Chromium via Puppeteer — Playwright (which this project uses) downloads its own browser in the next step.
+   - On Windows, run `set PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true && npm install` instead.
+3. Run `npx playwright install chromium` to download and set up Playwright's browser
 
 ### Set up PTS
 
@@ -112,10 +115,10 @@ This script requires some data about your car that's not available in the PTS GU
 5. Save `params.json`.
 6. Filter for the GET request to this URL: `https://www.fordtechservice.dealerconnection.com/wiring/TableOfContents` (there are query params at the end, that's ok).
    - Unlike last time, make sure "Contents" in the url is PLURAL: `TableOfContent`**`s`**, not `TableOfContent`
-7. Go to the request headers and find the "Cookie:" entry.
+7. Go to the request headers and find the **Cookie:** entry.
+   - **Firefox users:** You MUST enable the **Raw** toggle in the top right of the Request Headers panel **before copying**. If you skip this step, Firefox reformats the cookies and you will get an invalid character error when the script runs. This is easy to miss — do it before you select any text.
 8. Copy the cookies from this request (triple-click to select all) and paste into `templates/cookieString.txt`.
    - Do **not** include the name of the header (`cookieString.txt` should **not** include `Cookie:` for example.)
-   - **Firefox users:** You MUST enable the *Raw* toggle in the top right of the Request Headers panel before copying. If you skip this, Firefox reformats the cookies and you'll get an invalid character error when the script runs.
 9. Save `cookieString.txt`.
 
 ### Download the manual!
@@ -123,30 +126,30 @@ This script requires some data about your car that's not available in the PTS GU
 Run the downloader with:
 
 ```
-yarn start -c templates/params.json -s templates/cookieString.txt -o /directory/where/you/want/the/downloaded/manual/
+npm start -- -c templates/params.json -s templates/cookieString.txt -o /directory/where/you/want/the/downloaded/manual/
 ```
 
 By default, all pages are saved as **HTML only**. This is faster and produces better output than PDF for browsing.
 
 To also generate PDFs (and keep both):
 ```
-yarn start -c templates/params.json -s templates/cookieString.txt -o /path/to/output/ --pdf
+npm start -- -c templates/params.json -s templates/cookieString.txt -o /path/to/output/ --pdf
 ```
 
 To generate PDFs only (HTML is deleted after PDF generation):
 ```
-yarn start -c templates/params.json -s templates/cookieString.txt -o /path/to/output/ --pdfonly
+npm start -- -c templates/params.json -s templates/cookieString.txt -o /path/to/output/ --pdfonly
 ```
 
 **You will likely need to run this 2-3 times to get all files.** Ford's servers occasionally return timeouts or errors on individual pages. The script supports **automatic resume** — already-downloaded files are skipped on re-run, so just run the same command again until the output stabilizes. Add `--ignoreSaveErrors` if you want the script to continue past errors rather than stopping:
 
 ```
-yarn start -c templates/params.json -s templates/cookieString.txt -o /path/to/output/ --ignoreSaveErrors
+npm start -- -c templates/params.json -s templates/cookieString.txt -o /path/to/output/ --ignoreSaveErrors
 ```
 
 Make sure that the directory for the downloaded manual is empty the first time you run — it'll have lots of subfolders.
 
-You can get more param information by running `yarn start --help`.
+You can get more param information by running `npm start -- --help`.
 
 It can take a little while! On a fast computer with a fast internet connection, and more importantly a fast disk drive, over 15 minutes to download the manuals for the 2005 Taurus. Be patient!
 
@@ -280,7 +283,7 @@ All worked!
 To re-collect cookies, follow the instructions in [this](#all-vehicles-get-wiring-data) set of instructions, making sure you:
 
 - Remove the `Cookie: ` part of the header, if you copied it
-- **Firefox users:** Enable the *Raw* toggle in the top right of Request Headers before copying — this is mandatory or you'll get invalid character errors
+- **Firefox users:** Enable the **Raw** toggle in the top right of Request Headers **before copying** — this is mandatory or you'll get invalid character errors
 - Added a `; ` between the first paste and second paste if combining multiple requests
 
 If you're still having trouble, [reach out](#can-i-get-helpsupport).
@@ -300,8 +303,8 @@ As Ford continues to change how manuals are accessed, this project requires cont
 Contributions via pull requests are welcome. For the highest chance of getting your PR merged, please:
 
 - Keep everything typed — this project is 100% TypeScript
-- Keep using Yarn berry (no `node_modules` folder)
-- Format your code with `yarn format` before submitting
+- Use `npm` (this fork does not use Yarn)
+- Format your code with `npm run format` before submitting
 
 ### Can I get help/support?
 
