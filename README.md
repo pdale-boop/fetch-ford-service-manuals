@@ -226,9 +226,6 @@ This fork includes the following fixes and improvements over [iamtheyammer/fetch
 **Resume support:**
 - Already-downloaded files are skipped automatically on re-run, so interrupted downloads can be safely resumed
 
-**Added utility:**
-- `src/patchConnectorSvgs.ts` — standalone script to retroactively patch face SVGs into connector HTML files from a previous run that had missing diagrams
-
 ## Common Issues
 
 ### Failed to log in with the provided cookies.
