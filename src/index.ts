@@ -1,4 +1,5 @@
 import { writeFile, readFile, mkdir } from "fs/promises";
+import { existsSync, readFileSync } from "fs";
 import fetchTreeAndCover, {
   FetchTreeAndCoverParams,
 } from "./workshop/fetchTreeAndCover";
@@ -228,12 +229,26 @@ async function modernWorkshop(
   await writeFile(coverPath + ".html", pageHTML);
 
   console.log("Saving manual files...");
+  // Load path_mapping.json if it exists (enables skip logic for shortened files)
+  const mappingPath = join(outputPath, "path_mapping.json");
+  let pathMapping: Record<string, string> | undefined;
+  if (existsSync(mappingPath)) {
+    try {
+      pathMapping = JSON.parse(readFileSync(mappingPath, "utf-8"));
+      console.log("Loaded path_mapping.json for skip checks");
+    } catch (e) {
+      console.warn("Could not parse path_mapping.json, skipping mapping");
+    }
+  }
+
   await saveEntireManual(
     outputPath,
     tableOfContents,
     config.workshop,
     browserPage,
-    restArgs
+    restArgs,
+    pathMapping,
+    outputPath
   );
 }
 

@@ -1,6 +1,5 @@
 import { access } from "fs/promises";
 import { constants, createWriteStream } from "fs";
-import { type as osType } from "os";
 
 export async function fileExists(path: string): Promise<boolean> {
   try {
@@ -21,8 +20,7 @@ export async function fileExists(path: string): Promise<boolean> {
 
 // Emdashes (\u2013) are included as they are multi-byte and throw off length
 // calculations where 1 character is expected to be 1 byte.
-const dashReplaceRegex =
-  osType() === "Windows_NT" ? /[<>:"\\/|?*\0\u2013]/gm : /[\\/\0\u2013]/gm;
+const dashReplaceRegex = /[<>:"\\/|?*\0\u2013]/gm;
 // Characters to remove. Mostly newlines and tabs.
 const removeRegex = /[$\r\n\f\v]/gm;
 export const sanitizeName = (name: string): string =>

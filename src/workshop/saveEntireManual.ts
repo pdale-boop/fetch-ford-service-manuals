@@ -1,6 +1,6 @@
 import { mkdir, writeFile, unlink } from "fs/promises";
-import { existsSync } from "fs";
-import { join, resolve } from "path";
+import { existsSync, readFileSync } from "fs";
+import { join, resolve, relative } from "path";
 import fetchManualPage, { FetchManualPageParams } from "./fetchManualPage";
 import client from "../client";
 import { Page } from "playwright";
@@ -14,7 +14,9 @@ export default async function saveEntireManual(
   toc: any,
   fetchPageParams: FetchManualPageParams,
   browserPage: Page,
-  options: SaveOptions
+  options: SaveOptions,
+  pathMapping?: Record<string, string>,
+  outputRoot?: string
 ) {
   const exploded = Object.entries(toc);
 
@@ -58,6 +60,18 @@ export default async function saveEntireManual(
       if (existsSync(htmlPath)) {
         console.log(`Skipping already downloaded: ${name}`);
         continue;
+      }
+      // Check shortened path from path_mapping.json
+      if (pathMapping && outputRoot) {
+        const relPath = relative(outputRoot, htmlPath).replace(/\\/g, "/");
+        const mappedRel = pathMapping[relPath];
+        if (mappedRel) {
+          const mappedAbs = resolve(join(outputRoot, mappedRel));
+          if (existsSync(mappedAbs)) {
+            console.log(`Skipping already downloaded (shortened): ${name}`);
+            continue;
+          }
+        }
       }
 
       try {
@@ -111,7 +125,9 @@ export default async function saveEntireManual(
         docID,
         fetchPageParams,
         browserPage,
-        options
+        options,
+        pathMapping,
+        outputRoot
       );
     }
   }

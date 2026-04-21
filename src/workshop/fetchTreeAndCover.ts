@@ -2,6 +2,7 @@ import client from "../client";
 import { stringify } from "qs";
 import { FetchManualPageParams } from "./fetchManualPage";
 import { JSDOM } from "jsdom";
+import { sanitizeName } from "../utils";
 
 export interface FetchTreeAndCoverParams extends FetchManualPageParams {
   CategoryDescription: string;
@@ -65,7 +66,7 @@ function parseul(
       const docid = a.getAttribute("data-for");
 
       // @ts-ignore
-      objectpath[name] = docid;
+      objectpath[sanitizeName(name)] = docid;
       // this is a foreach, equivalent to a continue;
       return;
     }
@@ -79,7 +80,7 @@ function parseul(
     }
 
     // continue recursion
-    objectpath[span.textContent || "null-span-textcontent"] = parseul(
+    objectpath[sanitizeName(span.textContent || "null-span-textcontent")] = parseul(
       {},
       childUl
     );

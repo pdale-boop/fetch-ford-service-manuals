@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2025 Ford Maverick — Service Manual</title>
+<style>
+  /* ── Fonts ── */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+  /* ── Variables ── */
+  :root {
+    --bg:        #0f0f10;
+    --surface:   #18181b;
+    --border:    #2a2a2f;
+    --accent:    #e8531a;
+    --accent2:   #f59e0b;
+    --text:      #e4e4e7;
+    --muted:     #71717a;
+    --sidebar-w: 300px;
+    --header-h:  48px;
+    --mono:      'DM Mono', monospace;
+    --sans:      'DM Sans', sans-serif;
+    --display:   'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  header {
+    height: var(--header-h);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 16px;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .search-wrap {
+    flex: 1;
+    max-width: 480px;
+    position: relative;
+  }
+
+  #search {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 6px 12px 6px 32px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  #search:focus { border-color: var(--accent); }
+  #search::placeholder { color: var(--muted); }
+
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+    font-size: 13px;
+  }
+
+  #search-results {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 200;
+    display: none;
+  }
+
+  #search-results.visible { display: block; }
+
+  .search-result {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  .search-result:last-child { border-bottom: none; }
+  .search-result:hover { background: var(--bg); }
+
+  .result-title {
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .result-path {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: var(--mono);
+    margin-top: 2px;
+  }
+
+  .result-type {
+    display: inline-block;
+    font-size: 9px;
+    font-family: var(--mono);
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-right: 6px;
+    text-transform: uppercase;
+  }
+
+  .type-workshop { background: #1e3a5f; color: #60a5fa; }
+  .type-connector { background: #1a3320; color: #4ade80; }
+  .type-wiring { background: #3b1f0a; color: var(--accent2); }
+
+  .header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+  }
+
+  /* ── Layout ── */
+  .body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── Sidebar ── */
+  #sidebar {
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .sidebar-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .sidebar-tab {
+    flex: 1;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 10px;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .sidebar-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .sidebar-tab:hover:not(.active) { color: var(--text); }
+
+  .sidebar-panel {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  .sidebar-panel.active { display: block; }
+
+  /* Scrollbar */
+  .sidebar-panel::-webkit-scrollbar { width: 4px; }
+  .sidebar-panel::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── Tree ── */
+  .tree-node { }
+
+  .tree-branch {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+    transition: color 0.1s, background 0.1s;
+    user-select: none;
+  }
+
+  .tree-branch:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+
+  .tree-branch.open { color: var(--text); }
+
+  .tree-chevron {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+    opacity: 0.5;
+  }
+
+  .tree-branch.open .tree-chevron { transform: rotate(90deg); }
+
+  .tree-children {
+    display: none;
+    padding-left: 16px;
+  }
+
+  .tree-children.open { display: block; }
+
+  .tree-leaf {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 12px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 11px;
+    transition: color 0.1s, background 0.1s;
+    border-left: 2px solid transparent;
+  }
+
+  .tree-leaf:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+
+  .tree-leaf.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(232,83,26,0.08);
+  }
+
+  /* ── Connector list ── */
+  .connector-search-wrap {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  #connector-filter {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 11px;
+    padding: 5px 10px;
+    outline: none;
+  }
+
+  #connector-filter:focus { border-color: var(--accent); }
+  #connector-filter::placeholder { color: var(--muted); }
+
+  .connector-panel-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .connector-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+  }
+
+  .connector-list::-webkit-scrollbar { width: 4px; }
+  .connector-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .connector-item {
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-left: 2px solid transparent;
+  }
+
+  .connector-item:hover { background: rgba(255,255,255,0.03); }
+
+  .connector-item.active {
+    border-left-color: #4ade80;
+    background: rgba(74,222,128,0.06);
+  }
+
+  .connector-name {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+  }
+
+  .connector-desc {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── Wiring list ── */
+  .wiring-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-left: 2px solid transparent;
+  }
+
+  .wiring-item:hover { background: rgba(255,255,255,0.03); }
+
+  .wiring-item.active {
+    border-left-color: var(--accent2);
+    background: rgba(245,158,11,0.06);
+  }
+
+  .wiring-type-badge {
+    font-size: 8px;
+    font-family: var(--mono);
+    padding: 1px 4px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .badge-page { background: #1f2937; color: #9ca3af; }
+  .badge-connectors { background: #1a3320; color: #4ade80; }
+  .badge-locindex { background: #1e1b4b; color: #a5b4fc; }
+
+  .wiring-title {
+    font-size: 11px;
+    color: var(--muted);
+    transition: color 0.1s;
+  }
+
+  .wiring-item:hover .wiring-title,
+  .wiring-item.active .wiring-title { color: var(--text); }
+
+  /* ── Content area ── */
+  #content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  #breadcrumb {
+    height: 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+    flex-shrink: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .bc-sep { opacity: 0.4; }
+  .bc-item { color: var(--muted); }
+  .bc-item.current { color: var(--text); }
+
+  #content-body {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Workshop content wrapper */
+  #content-frame {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    padding: 24px 32px;
+    background: #fafaf9;
+    color: #1c1917;
+    display: none;
+  }
+
+  #content-frame::-webkit-scrollbar { width: 6px; }
+  #content-frame::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 3px; }
+
+  /* Workshop HTML styles injected wrapper */
+  .workshop-content {
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .workshop-content table { border-collapse: collapse; width: 100%; margin: 8px 0; }
+  .workshop-content td, .workshop-content th { border: 1px solid #ccc; padding: 4px 8px; }
+  .workshop-content h1, .workshop-content h2, .workshop-content h3 { margin: 12px 0 6px; }
+  .workshop-content img { max-width: 100%; height: auto; }
+  .workshop-content a { color: #1d4ed8; }
+
+  /* SVG viewer */
+  #svg-viewer {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+    display: none;
+    background: #fff;
+  }
+
+  #svg-viewer svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 800px;
+  }
+
+  /* SVG page selector */
+  #svg-pages {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    max-width: 200px;
+    z-index: 10;
+  }
+
+  .svg-page-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 7px;
+    border-radius: 3px;
+    cursor: pointer;
+    background: var(--bg);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    transition: all 0.1s;
+  }
+
+  .svg-page-btn:hover { color: var(--text); }
+  .svg-page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* Connector viewer */
+  #connector-frame {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    display: none;
+    background: #fafaf9;
+    color: #1c1917;
+    padding: 24px 32px;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  #connector-frame * {
+    color: inherit;
+  }
+
+  #connector-frame h2 {
+    color: #1c1917;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  #connector-frame table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  #connector-frame td, #connector-frame th {
+    border: 1px solid #999;
+    padding: 4px 8px;
+    color: #1c1917;
+    background: inherit;
+  }
+
+  #connector-frame th { background: #ccc !important; font-weight: bold; }
+  #connector-frame .pintable tr:nth-child(even) td { background: #eee !important; }
+  #connector-frame svg { max-width: 500px; height: auto; cursor: zoom-in; }
+
+  #connector-frame::-webkit-scrollbar { width: 6px; }
+  #connector-frame::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 3px; }
+
+  /* Connector file classes */
+  #connector-frame .header-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  #connector-frame .header-table th, #connector-frame .header-table td { border: 1px solid #999; padding: 4px 8px; text-align: center; }
+  #connector-frame .header-table th { background: #ccc; font-weight: bold; }
+  #connector-frame .face-pin-row { display: flex; gap: 16px; margin-bottom: 12px; align-items: flex-start; }
+  #connector-frame .face-col { flex: 0 0 280px; }
+  #connector-frame .face-col svg { width: 280px; height: auto; }
+  #connector-frame .pin-col { flex: 1; }
+  #connector-frame .pintable { width: 100%; border-collapse: collapse; font-size: 11px; }
+  #connector-frame .pintable th { background: #ccc; border: 1px solid #999; padding: 4px 6px; text-align: center; }
+  #connector-frame .pintable td { border: 1px solid #999; padding: 3px 6px; }
+  #connector-frame .pintable tr:nth-child(even) td { background: #eee; }
+  #connector-frame .section-label { font-weight: bold; margin: 10px 0 4px 0; font-size: 12px; }
+  #connector-frame .termtable { width: 60%; border-collapse: collapse; font-size: 11px; margin-bottom: 12px; }
+  #connector-frame .termtable th { background: #ccc; border: 1px solid #999; padding: 4px 6px; }
+  #connector-frame .termtable td { border: 1px solid #999; padding: 3px 6px; }
+  #connector-frame .pigtail-block { display: flex; gap: 12px; border: 1px solid #999; padding: 8px; margin-bottom: 8px; align-items: flex-start; }
+  #connector-frame .pigtail-img { flex: 0 0 140px; }
+  #connector-frame .pigtail-img img { max-width: 140px; max-height: 120px; }
+  #connector-frame .pigtail-kit-header { font-weight: bold; margin-bottom: 4px; }
+  #connector-frame .pigtail-info { flex: 1; font-size: 11px; line-height: 1.8; }
+
+  /* Welcome screen */
+  #welcome {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+  }
+
+  .welcome-logo {
+    font-family: var(--display);
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--border);
+    letter-spacing: -0.03em;
+  }
+
+  .welcome-logo span { color: var(--accent); opacity: 0.4; }
+
+  .welcome-sub {
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--muted);
+  }
+
+  .welcome-vehicle {
+    margin-bottom: 16px;
+  }
+
+  .welcome-truck {
+    width: 420px;
+    max-width: 90%;
+    height: auto;
+    border-radius: 8px;
+    opacity: 0.9;
+  }
+
+  .welcome-warning {
+    max-width: 480px;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.5;
+    margin-top: 8px;
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: rgba(232,83,26,0.05);
+  }
+
+  .welcome-warning b {
+    color: var(--accent);
+  }
+
+  /* Loading indicator */
+  #loading {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+  }
+
+  #loading.visible { display: flex; }
+
+  .spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Resize handle */
+  #resize-handle {
+    width: 4px;
+    background: transparent;
+    cursor: col-resize;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  #resize-handle:hover { background: var(--accent); }
+
+  /* ── Hide broken Ford UI images ── */
+  img[src*="/content/images/workshop/CaretRight"],
+  img[src*="/content/images/workshop/CaretDown"],
+  img[src*="/content/images/workshop/FordEcat"],
+  img[src*="/content/images/workshop/SLTS"],
+  img[src*="/content/images/workshop/ShoppingCart"],
+  img[src*="/content/images/workshop/fdrs"],
+  img[src*="/content/images/workshop/bancircle"],
+  img[src*="/content/images/workshop/maximize"],
+  img[src*="/content/images/workshop/video"],
+  img[src*="/content/images/workshop/videoplayer"],
+  img[src*="/content/images/workshop/Help"],
+  img[src*="/content/images/workshop/print"],
+  img[src*="/content/images/workshop/ppt-minus"],
+  img[src*="/content/images/workshop/ppt-plus"],
+  img[src*="/Content/images/workshop/arrowback"],
+  img[src*="/Content/images/icons-png/bars-black"],
+  img[src*="/Content/images/icons-png/minus-black"] {
+    display: none !important;
+  }
+
+  /* -- Workshop content theming -- */
+
+  /* Light mode: warm parchment */
+  @media (prefers-color-scheme: light) {
+    #content-frame {
+      background: #f5f0e8 !important;
+      color: #2c2416 !important;
+    }
+    .workshop-content h1,
+    .workshop-content h2,
+    .workshop-content h3,
+    .workshop-content h4 {
+      color: #1a120a;
+      border-bottom: 2px solid #c8a96e;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+    .workshop-content th {
+      background: #e8d9b8 !important;
+      border-color: #c8a96e !important;
+      color: #2c2416 !important;
+    }
+    .workshop-content td {
+      border-color: #d4c09a !important;
+    }
+    .workshop-content tr:nth-child(even) td {
+      background: #ede7d8 !important;
+    }
+    .workshop-content a {
+      color: #8b3a0f !important;
+    }
+    .workshop-content a:hover {
+      color: #e8531a !important;
+    }
+  }
+
+  /* Dark mode: matches sidebar */
+  @media (prefers-color-scheme: dark) {
+    #content-frame {
+      background: #1e1e24 !important;
+      color: #d4d4d8 !important;
+    }
+    .workshop-content {
+      color: #d4d4d8;
+    }
+    .workshop-content h1,
+    .workshop-content h2,
+    .workshop-content h3,
+    .workshop-content h4 {
+      color: #e4e4e7 !important;
+      border-bottom: 2px solid #e8531a;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+    .workshop-content th {
+      background: #2a2a32 !important;
+      border-color: #3a3a44 !important;
+      color: #a1a1aa !important;
+    }
+    .workshop-content td {
+      border-color: #2a2a32 !important;
+      color: #d4d4d8 !important;
+    }
+    .workshop-content tr:nth-child(even) td {
+      background: #232329 !important;
+    }
+    .workshop-content a {
+      color: #60a5fa !important;
+    }
+    .workshop-content a:hover {
+      color: #93c5fd !important;
+    }
+    .workshop-content b,
+    .workshop-content strong {
+      color: #e4e4e7;
+    }
+    .workshop-content i,
+    .workshop-content em {
+      color: #a1a1aa;
+    }
+    .workshop-content [style*="background-color: #"] {
+      background-color: #2a2a32 !important;
+      color: #e4e4e7 !important;
+    }
+  }
+
+  /* -- Hide Ford VIN/toolbar frame -- */
+  .show-vin,
+  span.show-vin {
+    display: none !important;
+  }
+
+  /* ── Connector modal ── */
+  #connector-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  #connector-modal-overlay.visible { display: flex; }
+
+  #connector-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  #connector-modal-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+
+  #connector-modal-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+  .connector-modal-btn {
+    padding: 9px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.1s, border-color 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .connector-modal-btn:hover { background: var(--border); border-color: var(--muted); }
+  .connector-modal-btn .btn-icon { font-size: 14px; flex-shrink: 0; }
+  .connector-modal-btn .btn-label { font-weight: 500; }
+  .connector-modal-btn .btn-sub { font-size: 10px; color: var(--muted); margin-left: auto; font-family: var(--mono); }
+
+  .connector-modal-btn {
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    text-align: left;
+    transition: background 0.1s, border-color 0.1s;
+  }
+
+  .connector-modal-btn:hover { background: var(--border); }
+
+  .connector-modal-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .connector-modal-btn.primary:hover { background: #d44a17; }
+
+  #connector-modal-spinner {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+    display: none;
+  }
+
+  @keyframes item-highlight {
+    0%   { outline: 3px solid #f59e0b; outline-offset: 6px; }
+    50%  { outline: 3px solid #f59e0b; outline-offset: 6px; }
+    100% { outline: none; }
+  }
+
+  /* ── Color coding squares next to procedure images ── */
+  .workshop-content td[bgcolor] {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    padding: 0 !important;
+  }
+  /* Prevent dark/light mode table rules from overriding color swatches */
+  .workshop-content tr td[bgcolor],
+  .workshop-content tr:nth-child(even) td[bgcolor],
+  .workshop-content tr:nth-child(odd) td[bgcolor] {
+    background: unset !important;
+  }
+
+  /* Connector face PNG (replaces inline SVG after conversion) */
+  #connector-frame .connector-face-img {
+    display: block;
+    height: auto;
+    max-width: 280px;
+    margin-bottom: 16px;
+    cursor: zoom-in;
+    transition: max-width 0.2s;
+  }
+  #connector-frame .connector-face-img.zoomed {
+    max-width: 100%;
+    cursor: zoom-out;
+  }
+  @media (prefers-color-scheme: dark) {
+    #connector-frame .connector-face-img { filter: invert(1); }
+  }
+
+  /* -- Dark mode for wiring SVG viewer -- */
+  @media (prefers-color-scheme: dark) {
+    #svg-viewer {
+      background: #1e1e24 !important;
+    }
+    #connector-frame {
+      background: #1e1e1e !important;
+      color: #e4e4e7 !important;
+    }
+    #connector-frame table {
+      border-color: #3a3a44 !important;
+    }
+    #connector-frame td, #connector-frame th {
+      border-color: #3a3a44 !important;
+      color: #e4e4e7 !important;
+      background: #1e1e1e !important;
+    }
+    #connector-frame th {
+      background: #2a2a32 !important;
+      color: #a1a1aa !important;
+    }
+    #connector-frame h1, #connector-frame h2, #connector-frame h3 {
+      color: #e4e4e7 !important;
+      border-bottom: 2px solid #e8531a;
+    }
+    #connector-frame .pintable tr:nth-child(even) td,
+    #connector-frame tr:nth-child(even) td {
+      background: #252528 !important;
+    }
+    #connector-frame tr:nth-child(odd) td {
+      background: #1e1e1e !important;
+    }
+    /* Pin circles: dark fill so they stand out on dark bg */
+    #connector-frame .face-col svg circle[id^="PIN_GRAPHIC"] {
+      fill: #1e1e1e !important;
+      stroke: #e4e4e7 !important;
+    }
+  }
+</style>
+
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">MAV<span>2025</span> · Service Manual</div>
+
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Search procedures, connectors, circuits…" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+
+  <div class="header-right" id="page-count">loading…</div>
+</header>
+
+<!-- Body -->
+<div class="body">
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="sidebar-tabs">
+      <div class="sidebar-tab active" data-panel="workshop">Workshop</div>
+      <div class="sidebar-tab" data-panel="wiring">Wiring</div>
+      <div class="sidebar-tab" data-panel="connectors">Connectors</div>
+    </div>
+
+    <!-- Workshop panel -->
+    <div class="sidebar-panel active" id="panel-workshop">
+      <div id="workshop-tree"></div>
+    </div>
+
+    <!-- Wiring panel -->
+    <div class="sidebar-panel" id="panel-wiring">
+      <div id="wiring-list"></div>
+    </div>
+
+    <!-- Connectors panel -->
+    <div class="sidebar-panel" id="panel-connectors">
+      <div class="connector-panel-inner">
+        <div class="connector-search-wrap">
+          <input type="text" id="connector-filter" placeholder="Filter connectors…" autocomplete="off">
+        </div>
+        <div class="connector-list" id="connector-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resize handle -->
+  <div id="resize-handle"></div>
+
+  <!-- Content -->
+  <div id="content">
+    <div id="breadcrumb"><span class="bc-item">2025 Maverick Service Manual</span></div>
+
+    <div id="content-body">
+      <div id="loading"><div class="spinner"></div></div>
+
+      <div id="welcome">
+        <div class="welcome-vehicle">
+          <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/4QCORXhpZgAATU0AKgAAAAgAAgESAAMAAAABAAEAAIdpAAQAAAABAAAAJgAAAAAABJADAAIAAAAUAAAAXJAEAAIAAAAUAAAAcJKRAAIAAAADMDAAAJKSAAIAAAADMDAAAAAAAAAyMDI0OjA2OjA1IDExOjEwOjMzADIwMjQ6MDY6MDUgMTE6MTA6MzMAAAD/4QGcaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49J++7vycgaWQ9J1c1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCc/Pg0KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyI+PHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj48cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0idXVpZDpmYWY1YmRkNS1iYTNkLTExZGEtYWQzMS1kMzNkNzUxODJmMWIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+PHhtcDpDcmVhdGVEYXRlPjIwMjQtMDYtMDVUMTE6MTA6MzM8L3htcDpDcmVhdGVEYXRlPjwvcmRmOkRlc2NyaXB0aW9uPjwvcmRmOlJERj48L3g6eG1wbWV0YT4NCjw/eHBhY2tldCBlbmQ9J3cnPz7/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAEsAfQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD2uiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAMUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUAJiinYooAXFGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA3FGKdijFACYop2KKAFxRinYoxQA3FGKdijFADcUYp2KMUANxRinYoxQA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T/wGqUvw98Ky/f0W2/X/ABrrKKAOJk+F3g6T72iwfgzf41Wk+Efgt+ujIPo7f4139FAHnL/BrwS3/MJx9JWqFvgn4Ib/AJhrj6SmvTKKAPLm+Bvgc/8ALhMPpMajb4EeCD/y53I/7bf/AFq9VooA8mb4CeCD/wAu12P+23/1qYfgD4JP/LC8/wC/w/wr1yigDyE/s/eCT/yyvf8Av8P8Kb/wz74K/wCed7/39H+FewUUAePf8M+eCv7l9/39H+FH/DPfgr+5ff8Af0f4V7DRQB4//wAM+eCv+ed7/wB/R/hSj9n3wSP+WN6f+2o/wr1+igDyMfADwOOttdn/ALbD/Cnr8A/Ao62VwfrN/wDWr1migDytfgR4DXrpkjfWU1MnwO8Ar10RW+srf416dRQB5wnwV+H6f8y7bN/vMx/rViP4P+AI+nhbTj/vKT/M139FAHHW/wAMvBFuQYvCmigj+9aI38xW/p+iaVpq7dO0yytF9IIFT+QrSooAb06UU6igY2inUUANop1FAhtFOooGNop1FADaKdRQA2inUUANop1FADaKdRQA2inUUANop1FADaKdRQAuKKXFGKBCYoxS4oxQAmKMUuKMUAJijFLijFACYoxS4oxQAlGKXFGKAEopcUYoATFGKXFGKAExRilxRigBKMUuKMUAJijFLijFACUYpcUYoATFFLijFACUYpcUYoASilxRigBKKXFGKAEoxS4oxQAmKKXFGKAEoxS4oxQAmKKXFGKAEopcUYoATFGKXFGKAExRilxRigBKMUuKMUAJRS4oxQAmKMUuKMUAJijFLijFACYoxS4oxQAlGKXFGKAExRilxRigBKMUuKMUAJiilxRQA6ilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooATFFLRQAuKMUUUAGKMUUUAGKMUUUAJijFLRQAYpMUtFACYpcUUUAGKMUUUAGKTFLRQAYoxRRQAYoxRRQAYoxRRQAYoxRRQAYoxRRQAYoxRRQAYoxRRQAYpMUtFABijFFFABijFFFABijFFFABijFFFACYoxS0UAGKTFLRQAYoxRRQAmKXFFFABijFFFABikxS0UAGKMUUUAGKMUUUAGKMUUUAJijFLRQAYoxRRQAYooooA/9k=" alt="2025 Ford Maverick" class="welcome-truck">
+        </div>
+        <div class="welcome-logo">MAV<span>2025</span> · Service Manual</div>
+        <div class="welcome-sub">Select a section from the sidebar to begin</div>
+        <div class="welcome-warning">
+          ⚠️ <b>WARNING:</b> Before beginning any service procedure, refer to health and safety warnings in section 100-00 General Information.
+        </div>
+      </div>
+
+      <div id="content-frame"></div>
+      <div id="svg-viewer">
+        <div id="svg-pages"></div>
+        <div id="svg-content"></div>
+      </div>
+      <div id="connector-frame"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Connector modal -->
+<div id="connector-modal-overlay">
+  <div id="connector-modal">
+    <div id="connector-modal-title"></div>
+    <div id="connector-modal-desc"></div>
+    <button class="connector-modal-btn primary" id="connector-modal-face">View Face &amp; Pinout</button>
+    <button class="connector-modal-btn" id="connector-modal-location">View Location on Vehicle</button>
+    <div id="connector-modal-spinner">Searching…</div>
+  </div>
+</div>
+
+<script>
+
+// ── State ──
+const state = {
+  tocData: null,
+  wiringToc: null,
+  connectors: [],
+  searchIndex: [],
+  docIdIndex: {},
+  pathMapping: {},
+  currentSvgFiles: [],
+  locationHighlight: null,
+  locationHighlightOrigFill: null,
+};
+
+// ── Scroll save/restore ──
+// scrollSaveEnabled lives at module scope so all functions share it cleanly.
+let scrollSaveEnabled = true;
+
+function saveCurrentScroll() {
+  if (!scrollSaveEnabled) return;
+  const ws = document.getElementById('content-frame').scrollTop;
+  const sv = document.getElementById('svg-viewer').scrollTop;
+  const cf = document.getElementById('connector-frame').scrollTop;
+  history.replaceState({ ...history.state, ws, sv, cf }, '');
+}
+
+function restoreScroll(state) {
+  if (!state) return;
+  scrollSaveEnabled = false;
+  // rAF ensures the DOM has painted before we set scrollTop
+  requestAnimationFrame(() => {
+    if (state.ws !== undefined) document.getElementById('content-frame').scrollTop = state.ws;
+    if (state.sv !== undefined) document.getElementById('svg-viewer').scrollTop = state.sv;
+    if (state.cf !== undefined) document.getElementById('connector-frame').scrollTop = state.cf;
+    scrollSaveEnabled = true;
+  });
+}
+
+// Attach scroll listeners once
+['content-frame', 'svg-viewer', 'connector-frame'].forEach(id => {
+  document.getElementById(id).addEventListener('scroll', saveCurrentScroll, { passive: true });
+});
+
+// ── popstate — back/forward navigation ──
+window.addEventListener('popstate', (e) => {
+  const s = e.state;
+  if (!s || !s.type) return;
+
+  if (s.type === 'workshop') {
+    _loadWorkshopPage(s.path, s.breadcrumb, false).then(() => restoreScroll(s));
+    highlightLeafByPath(s.path);
+  } else if (s.type === 'wiring') {
+    highlightWiringItem(s.cell);
+    _loadSvgFolder(s.folder, s.cell, false).then(() => restoreScroll(s));
+  } else if (s.type === 'connector') {
+    const conn = state.connectors.find(c => c.Name === s.connName);
+    if (conn) {
+      highlightConnectorInList(conn.Name);
+      _loadConnector(conn, false).then(() => restoreScroll(s));
+    }
+  }
+});
+
+// ── Path helpers ──
+function encodePath(p) {
+  return p.split('/').map(encodeURIComponent).join('/');
+}
+
+// ── Init ──
+async function init() {
+  try {
+    const [tocResp, wiringResp, connResp, mappingResp] = await Promise.all([
+      fetch('toc.json'),
+      fetch('Wiring/toc.json'),
+      fetch('Wiring/Connector Views/connectors.json'),
+      fetch('path_mapping.json'),
+    ]);
+    state.tocData    = tocResp.ok ? await tocResp.json() : {};
+    state.wiringToc  = wiringResp.ok ? await wiringResp.json() : [];
+    state.connectors = connResp.ok ? await connResp.json() : [];
+    state.pathMapping = mappingResp.ok ? await mappingResp.json() : {};
+
+    buildDocIdIndex();
+    buildWorkshopTree();
+    buildWiringList();
+    buildConnectorList();
+    buildSearchIndex();
+
+    document.getElementById('page-count').textContent =
+      `${state.searchIndex.length} pages indexed`;
+
+    // Restore from hash on initial load
+    restoreFromHash();
+  } catch (e) {
+    console.error('Init error:', e);
+    document.getElementById('page-count').textContent = 'error loading index';
+  }
+}
+
+// ── Path mapping ──
+function resolvePath(oldPath) {
+  return state.pathMapping[oldPath] || oldPath;
+}
+
+
+// ── DocID index ──
+function buildDocIdIndex() {
+  function collect(node, pathParts) {
+    for (const [key, value] of Object.entries(node)) {
+      if (typeof value === 'string' && value.match(/^G\d+/)) {
+        const filePath = resolvePath([...pathParts, key + '.html'].join('/'));
+        state.docIdIndex[value] = filePath;
+      } else if (typeof value === 'object') {
+        collect(value, [...pathParts, key]);
+      }
+    }
+  }
+  collect(state.tocData, []);
+  console.log('DocID index built:', Object.keys(state.docIdIndex).length, 'entries');
+}
+
+// ── Workshop tree ──
+function buildWorkshopTree() {
+  const container = document.getElementById('workshop-tree');
+  container.innerHTML = '';
+  renderTree(state.tocData, container, []);
+}
+
+function renderTree(node, container, pathParts) {
+  for (const [key, value] of Object.entries(node)) {
+    const div = document.createElement('div');
+    div.className = 'tree-node';
+
+    if (typeof value === 'string') {
+      const leaf = document.createElement('div');
+      leaf.className = 'tree-leaf';
+      leaf.textContent = key;
+      leaf.title = key;
+      leaf.dataset.path = resolvePath((value && value.includes('/')) ? value : [...pathParts, key + '.html'].join('/'));
+      leaf.dataset.breadcrumb = [...pathParts, key].join(' › ');
+      leaf.addEventListener('click', () => loadWorkshopPage(leaf));
+      div.appendChild(leaf);
+    } else {
+      const branch = document.createElement('div');
+      branch.className = 'tree-branch';
+      branch.innerHTML = `
+        <svg class="tree-chevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="4,2 8,6 4,10"/>
+        </svg>
+        <span>${key}</span>`;
+
+      const children = document.createElement('div');
+      children.className = 'tree-children';
+
+      branch.addEventListener('click', () => {
+        branch.classList.toggle('open');
+        children.classList.toggle('open');
+      });
+
+      renderTree(value, children, [...pathParts, key]);
+      div.appendChild(branch);
+      div.appendChild(children);
+    }
+
+    container.appendChild(div);
+  }
+}
+
+// ── Wiring list ──
+function buildWiringList() {
+  const container = document.getElementById('wiring-list');
+  container.innerHTML = '';
+
+  for (const entry of state.wiringToc) {
+    const item = document.createElement('div');
+    item.className = 'wiring-item';
+    item.dataset.cell = entry.Number;
+
+    const badgeClass = {
+      'Page': 'badge-page',
+      'Connectors': 'badge-connectors',
+      'LocIndex': 'badge-locindex',
+    }[entry.Type] || 'badge-page';
+
+    item.innerHTML = `<span class="wiring-title">${entry.Title}</span>`;
+
+    item.addEventListener('click', () => loadWiringSection(entry));
+    container.appendChild(item);
+  }
+}
+
+// ── Connector list ──
+function buildConnectorList() {
+  renderConnectorList(state.connectors);
+
+  document.getElementById('connector-filter').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase();
+    const filtered = state.connectors.filter(c =>
+      c.Name.toLowerCase().includes(q) ||
+      (c.Desc || '').toLowerCase().includes(q)
+    );
+    renderConnectorList(filtered);
+  });
+}
+
+function renderConnectorList(connectors) {
+  const container = document.getElementById('connector-list');
+  container.innerHTML = '';
+  for (const conn of connectors) {
+    const item = document.createElement('div');
+    item.className = 'connector-item';
+    item.innerHTML = `
+      <div class="connector-name">${conn.Name}</div>
+      <div class="connector-desc">${conn.Desc || ''}</div>`;
+    item.addEventListener('click', () => loadConnector(conn));
+    container.appendChild(item);
+  }
+}
+
+// ── Search index ──
+function buildSearchIndex() {
+  function indexNode(node, pathParts) {
+    for (const [key, value] of Object.entries(node)) {
+      if (typeof value === 'string') {
+        state.searchIndex.push({
+          type: 'workshop',
+          title: key,
+          path: [...pathParts, key + '.html'].join('/'),
+          breadcrumb: [...pathParts, key].join(' › '),
+          keywords: key.toLowerCase(),
+        });
+      } else {
+        indexNode(value, [...pathParts, key]);
+      }
+    }
+  }
+  indexNode(state.tocData, []);
+
+  for (const conn of state.connectors) {
+    state.searchIndex.push({
+      type: 'connector',
+      title: `${conn.Name} — ${conn.Desc || ''}`,
+      breadcrumb: `Wiring › Connector Views › ${conn.Name}`,
+      keywords: `${conn.Name} ${conn.Desc || ''}`.toLowerCase(),
+      conn,
+    });
+  }
+
+  for (const entry of state.wiringToc) {
+    state.searchIndex.push({
+      type: 'wiring',
+      title: entry.Title,
+      breadcrumb: `Wiring › ${entry.Title}`,
+      keywords: entry.Title.toLowerCase(),
+      wiringEntry: entry,
+    });
+  }
+}
+
+// ── Search UI ──
+const searchInput = document.getElementById('search');
+const searchResultsEl = document.getElementById('search-results');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim().toLowerCase();
+  if (q.length < 2) { searchResultsEl.classList.remove('visible'); return; }
+
+  const matches = state.searchIndex.filter(item => item.keywords.includes(q)).slice(0, 30);
+
+  searchResultsEl.innerHTML = '';
+  if (!matches.length) {
+    searchResultsEl.innerHTML = '<div class="search-result"><div class="result-title" style="color:var(--muted)">No results</div></div>';
+  } else {
+    for (const m of matches) {
+      const el = document.createElement('div');
+      el.className = 'search-result';
+      const typeLabel = { workshop: 'Workshop', connector: 'Connector', wiring: 'Wiring' }[m.type];
+      const typeClass  = { workshop: 'type-workshop', connector: 'type-connector', wiring: 'type-wiring' }[m.type];
+      el.innerHTML = `
+        <div class="result-title">
+          <span class="result-type ${typeClass}">${typeLabel}</span>${m.title}
+        </div>
+        <div class="result-path">${m.breadcrumb}</div>`;
+      el.addEventListener('click', () => {
+        searchResultsEl.classList.remove('visible');
+        searchInput.value = '';
+        if (m.type === 'workshop') {
+          loadWorkshopPage({ dataset: { path: m.path, breadcrumb: m.breadcrumb } });
+        } else if (m.type === 'connector') {
+          switchTab('connectors');
+          loadConnector(m.conn);
+        } else if (m.type === 'wiring') {
+          switchTab('wiring');
+          loadWiringSection(m.wiringEntry);
+        }
+      });
+      searchResultsEl.appendChild(el);
+    }
+  }
+  searchResultsEl.classList.add('visible');
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-wrap')) searchResultsEl.classList.remove('visible');
+});
+
+// ── Tab switching ──
+document.querySelectorAll('.sidebar-tab').forEach(tab => {
+  tab.addEventListener('click', () => switchTab(tab.dataset.panel));
+});
+
+function switchTab(panel) {
+  document.querySelectorAll('.sidebar-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.panel === panel));
+  document.querySelectorAll('.sidebar-panel').forEach(p =>
+    p.classList.toggle('active', p.id === `panel-${panel}`));
+}
+
+// ── UI helpers ──
+function showLoading() { document.getElementById('loading').classList.add('visible'); }
+function hideLoading() { document.getElementById('loading').classList.remove('visible'); }
+
+function hideAll() {
+  document.getElementById('welcome').style.display        = 'none';
+  document.getElementById('content-frame').style.display  = 'none';
+  document.getElementById('svg-viewer').style.display     = 'none';
+  document.getElementById('connector-frame').style.display = 'none';
+}
+
+function setBreadcrumb(parts) {
+  const bc = document.getElementById('breadcrumb');
+  bc.innerHTML = parts.map((p, i) =>
+    `<span class="bc-item ${i === parts.length - 1 ? 'current' : ''}">${p}</span>`
+  ).join('<span class="bc-sep"> › </span>');
+}
+
+// ── Sidebar highlight helpers ──
+function highlightLeafByPath(path) {
+  document.querySelectorAll('.tree-leaf').forEach(leaf => {
+    leaf.classList.toggle('active', leaf.dataset.path === path);
+  });
+}
+
+function highlightWiringItem(cell) {
+  const cellStr = String(cell).padStart(3, '0');
+  document.querySelectorAll('.wiring-item').forEach(item => {
+    const active = item.dataset.cell === cellStr;
+    item.classList.toggle('active', active);
+    if (active) item.scrollIntoView({ block: 'nearest' });
+  });
+}
+
+function highlightConnectorInList(name) {
+  document.querySelectorAll('.connector-item').forEach(item => {
+    const nameEl = item.querySelector('.connector-name');
+    const active = nameEl && nameEl.textContent === name;
+    item.classList.toggle('active', active);
+    if (active) item.scrollIntoView({ block: 'nearest' });
+  });
+}
+
+// ── Workshop page loader ──
+// Public entry point — called by sidebar clicks, search, cross-links
+function loadWorkshopPage(leaf) {
+  const path       = leaf.dataset.path;
+  const breadcrumb = leaf.dataset.breadcrumb;
+  saveCurrentScroll();
+  history.pushState({ type: 'workshop', path, breadcrumb, ws: 0, sv: 0, cf: 0 }, '',
+    '#' + encodeURIComponent(path));
+  highlightLeafByPath(path);
+  return _loadWorkshopPage(path, breadcrumb, true);
+}
+
+// Internal — does the actual fetch/render, no history mutation
+async function _loadWorkshopPage(path, breadcrumb, openBranches) {
+  path = resolvePath(path);
+  setBreadcrumb((breadcrumb || path).split(' › '));
+  showLoading();
+  try {
+    if (path.endsWith('.pdf')) {
+      hideAll();
+      const frame = document.getElementById('content-frame');
+      frame.style.display = 'block';
+      frame.innerHTML = `<iframe src="${encodePath(path)}" style="width:100%;height:100%;border:none;position:absolute;inset:0;"></iframe>`;
+      hideLoading();
+      return;
+    }
+    const resp = await fetch(encodePath(path));
+    let html = await resp.text();
+    const pageFolder = path.split('/').slice(0, -1).join('/');
+    if (pageFolder) {
+      html = html.replace(/src="(?!http|\/|data:)([^"]+)"/g, (m, p1) => `src="${pageFolder}/${p1}"`);
+    }
+    hideAll();
+    const frame = document.getElementById('content-frame');
+    frame.style.display = 'block';
+    frame.innerHTML = `<div class="workshop-content">${html}</div>`;
+    rewriteConnectorLinks(frame);
+    makeCollapsible(frame);
+    rewriteVideos(frame);
+
+    // On forward nav, expand tree branches to reveal the active leaf
+    if (openBranches) expandTreeToPath(path);
+  } catch (e) {
+    hideAll();
+    const frame = document.getElementById('content-frame');
+    frame.style.display = 'block';
+    frame.innerHTML = `<div class="workshop-content"><p style="color:red">Error loading: ${path}</p></div>`;
+  }
+  hideLoading();
+}
+
+// Walk tree DOM and open branches that contain the active leaf
+function expandTreeToPath(path) {
+  document.querySelectorAll('.tree-leaf').forEach(leaf => {
+    if (leaf.dataset.path !== path) return;
+    let node = leaf.parentElement;
+    while (node && node.id !== 'workshop-tree') {
+      if (node.classList.contains('tree-children')) {
+        node.classList.add('open');
+        const branch = node.previousElementSibling;
+        if (branch && branch.classList.contains('tree-branch')) branch.classList.add('open');
+      }
+      node = node.parentElement;
+    }
+  });
+}
+
+// ── Wiring section loader ──
+function loadWiringSection(entry) {
+  if (entry.Type === 'Connectors') { switchTab('connectors'); return; }
+  const folder = `Wiring/${entry.Title.replace(/\//g, '-')}/`;
+  setBreadcrumb(['Wiring', entry.Title]);
+  saveCurrentScroll();
+  history.pushState({ type: 'wiring', folder, cell: entry.Number, ws: 0, sv: 0, cf: 0 }, '',
+    '#' + encodeURIComponent('wiring:' + entry.Number));
+  highlightWiringItem(entry.Number);
+  return _loadSvgFolder(folder, entry.Number, true);
+}
+
+// Internal SVG folder loader
+async function _loadSvgFolder(folder, cellNumber, freshLoad) {
+  showLoading();
+  try {
+    const resp = await fetch(encodePath(folder) + 'pageList.json');
+    const pageList = await resp.json();
+
+    hideAll();
+    const viewer = document.getElementById('svg-viewer');
+    viewer.style.display = 'block';
+    document.getElementById('svg-pages').innerHTML = '';
+    const svgContent = document.getElementById('svg-content');
+    svgContent.innerHTML = '';
+
+    const svgFiles = pageList
+      .filter(p => p && p.cell && p.page)
+      .map(p => ({ label: `${p.cell}_${p.page}`, filename: `${p.cell}_${p.page}.svg` }));
+
+    state.currentSvgFiles = svgFiles;
+
+    for (const f of svgFiles) {
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'border-bottom:1px solid #ddd;margin-bottom:8px;';
+      svgContent.appendChild(wrapper);
+      await loadSvgFile(folder, f.filename, wrapper);
+    }
+  } catch (e) {
+    console.error('Error loading SVG folder:', folder, e);
+  }
+  hideLoading();
+}
+
+async function loadSvgFile(folder, filename, container) {
+  const url = encodePath(folder) + encodeURIComponent(filename);
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    let svgText = await resp.text();
+    if (!svgText.includes('xmlns="http://www.w3.org/2000/svg"')) {
+      svgText = svgText.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+    }
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgText, 'image/svg+xml');
+    const svgEl = doc.querySelector('svg');
+    if (!svgEl || doc.querySelector('parsererror')) throw new Error('SVG parse failed');
+    svgEl.removeAttribute('width');
+    svgEl.removeAttribute('height');
+    svgEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svgEl.style.cssText = 'width:100%;height:auto;display:block;';
+    const vb = svgEl.getAttribute('viewBox');
+    if (vb) {
+      const parts = vb.trim().split(/[\s,]+/);
+      if (parts.length === 4) {
+        const w = parseFloat(parts[2]), h = parseFloat(parts[3]);
+        if (w > 0 && h > 0) svgEl.style.aspectRatio = w + ' / ' + h;
+      }
+    }
+    container.innerHTML = '';
+    container.appendChild(svgEl);
+
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      svgEl.querySelectorAll('[fill="rgb(243,243,243)"]').forEach(el => el.setAttribute('fill', '#2a2a2a'));
+      svgEl.querySelectorAll('text[fill="black"], text[fill="Black"]').forEach(el => el.setAttribute('fill', 'white'));
+      svgEl.querySelectorAll('[stroke="black"],[stroke="Black"]').forEach(el => {
+        if (!el.closest('g[id^="CIRC_"]')) el.setAttribute('stroke', '#888888');
+      });
+    }
+
+    rewriteSvgConnectorLinks(container);
+  } catch (e) {
+    container.innerHTML = '<p style="padding:20px;color:#999">Could not load: ' + filename + ' (' + e.message + ')</p>';
+  }
+}
+
+// ── Connector loader ──
+function loadConnector(conn) {
+  const filename = buildConnectorFilename(conn);
+  const path = `Wiring/Connector Views/${filename}`;
+  setBreadcrumb(['Wiring', 'Connector Views', conn.Name]);
+  saveCurrentScroll();
+  history.pushState({ type: 'connector', connName: conn.Name, path, ws: 0, sv: 0, cf: 0 }, '',
+    '#' + encodeURIComponent(path));
+  highlightConnectorInList(conn.Name);
+  return _loadConnector(conn, true);
+}
+
+async function _loadConnector(conn, freshLoad) {
+  const filename = buildConnectorFilename(conn);
+  const path = `Wiring/Connector Views/${filename}`;
+  showLoading();
+  try {
+    const resp = await fetch(encodePath(path));
+    let html = await resp.text();
+    // Rewrite relative src paths (e.g. faces/xxx.png)
+    const connFolder = 'Wiring/Connector Views';
+    html = html.replace(/src="(?!http|\/|data:)([^"]+)"/g, (m, p1) => `src="${connFolder}/${p1}"`);
+    hideAll();
+    const frame = document.getElementById('connector-frame');
+    frame.style.display = 'block';
+    frame.innerHTML = html;
+
+    frame.querySelectorAll('[onmouseover], [onmouseout]').forEach(el => {
+      el.removeAttribute('onmouseover');
+      el.removeAttribute('onmouseout');
+    });
+
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      frame.querySelectorAll('svg [stroke="black"]').forEach(el => el.setAttribute('stroke', 'white'));
+      frame.querySelectorAll('svg [stroke="#020202"]').forEach(el => el.setAttribute('stroke', 'white'));
+      frame.querySelectorAll('svg [stroke="#aaaaaa"]').forEach(el => el.setAttribute('stroke', '#888888'));
+      frame.querySelectorAll('svg [stroke="Black"]').forEach(el => el.setAttribute('stroke', 'white'));
+      frame.querySelectorAll('svg [fill="black"]').forEach(el => el.setAttribute('fill', 'white'));
+      frame.querySelectorAll('svg [fill="Black"]').forEach(el => el.setAttribute('fill', 'white'));
+      frame.querySelectorAll('svg [fill="rgb(243,243,243)"]').forEach(el => el.setAttribute('fill', '#2a2a2a'));
+      frame.querySelectorAll('svg text:not([fill])').forEach(el => el.setAttribute('fill', 'white'));
+    }
+
+    // Click to zoom connector face PNG
+    frame.querySelectorAll('.connector-face-img').forEach(img => {
+      img.addEventListener('click', () => img.classList.toggle('zoomed'));
+    });
+
+    frame.querySelectorAll('.face-pin-row').forEach(row => { row.style.flexDirection = 'column'; });
+    frame.querySelectorAll('svg').forEach(svg => {
+      svg.removeAttribute('width');
+      svg.removeAttribute('height');
+      svg.style.width = '100%';
+      svg.style.maxWidth = '100%';
+      svg.style.display = 'block';
+      svg.style.marginBottom = '16px';
+      svg.style.cursor = 'zoom-in';
+      svg.style.transition = 'height 0.2s';
+      const vb = svg.getAttribute('viewBox');
+      if (vb) {
+        const parts = vb.trim().split(/[\s,]+/);
+        if (parts.length === 4) {
+          const naturalW = parseFloat(parts[2]);
+          const naturalH = parseFloat(parts[3]);
+          svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+          const wrapper = document.createElement('div');
+          wrapper.style.cssText = 'width:100%;position:relative;';
+          svg.parentNode.insertBefore(wrapper, svg);
+          wrapper.appendChild(svg);
+          let zoomed = false;
+          requestAnimationFrame(() => {
+            const w = wrapper.getBoundingClientRect().width;
+            const naturalRender = w * (naturalH / naturalW);
+            svg.style.height = naturalRender + 'px';
+            svg.addEventListener('click', () => {
+              zoomed = !zoomed;
+              svg.style.height = zoomed ? (naturalRender * 2) + 'px' : naturalRender + 'px';
+              svg.style.cursor = zoomed ? 'zoom-out' : 'zoom-in';
+            });
+          });
+        }
+      }
+    });
+  } catch (e) {
+    console.error('Error loading connector:', e);
+  }
+  hideLoading();
+}
+
+function buildConnectorFilename(conn) {
+  const desc = conn.Desc || conn.Name || '';
+  const name = conn.Name;
+  let title = `${sanitizeName(desc)} - ${name}`;
+  if (title.length > 200) title = `${title.slice(0, 150)} (truncated) - ${name}`;
+  return title + '.html';
+}
+
+function sanitizeName(name) {
+  return (name || '').replace(/[–/]/g, '-').slice(0, 200);
+}
+
+// ── Initial load from hash ──
+function restoreFromHash() {
+  const hash = location.hash.slice(1);
+  if (!hash) return;
+  const path = decodeURIComponent(hash);
+  const savedState = history.state;
+
+  if (path.startsWith('wiring:')) {
+    const cell = path.split(':')[1].padStart(3, '0');
+    const entry = state.wiringToc && state.wiringToc.find(e => e.Number === cell);
+    if (!entry) return;
+    switchTab('wiring');
+    highlightWiringItem(cell);
+    const folder = `Wiring/${entry.Title.replace(/\//g, '-')}/`;
+    _loadSvgFolder(folder, cell, false).then(() => restoreScroll(savedState));
+
+  } else if (path.includes('Connector Views')) {
+    const filename = path.split('/').pop();
+    const conn = state.connectors.find(c => buildConnectorFilename(c) === filename);
+    if (!conn) return;
+    switchTab('connectors');
+    highlightConnectorInList(conn.Name);
+    _loadConnector(conn, false).then(() => restoreScroll(savedState));
+
+  } else {
+    const breadcrumb = path.replace('.html', '').replace(/\//g, ' › ');
+    highlightLeafByPath(path);
+    expandTreeToPath(path);
+    _loadWorkshopPage(path, breadcrumb, false).then(() => restoreScroll(savedState));
+  }
+}
+
+// ── Connector cross-links (workshop HTML) ──
+function rewriteConnectorLinks(container) {
+  const connectorMap = {};
+  state.connectors.forEach(c => connectorMap[c.Name] = c);
+
+  // data-for docID links
+  container.querySelectorAll('[data-for]').forEach(el => {
+    const docId = el.getAttribute('data-for');
+    if (!docId) return;
+    el.removeAttribute('onclick');
+    const path = state.docIdIndex[docId];
+    if (path) {
+      el.style.cursor = 'pointer';
+      el.style.color = '#1d4ed8';
+      el.style.textDecoration = 'underline';
+      el.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        loadWorkshopPage({ dataset: { path, breadcrumb: path.replace('.html','').replace(/\//g,' › ') } });
+      });
+    } else {
+      el.removeAttribute('onclick');
+    }
+  });
+
+  // Strip remaining Ford onclick handlers
+  container.querySelectorAll('[onclick]').forEach(el => {
+    const oc = el.getAttribute('onclick') || '';
+    if (oc.includes('Pinpoint') || oc.includes('load_sgmlid') ||
+        oc.includes('partlink')  || oc.includes('clickPpt')) {
+      el.removeAttribute('onclick');
+    }
+  });
+
+  // href="#G..." anchor links
+  container.querySelectorAll('a[href]').forEach(a => {
+    const href = a.getAttribute('href') || '';
+    if (href.startsWith('#G') || href.startsWith('#g')) {
+      const docId = href.slice(1).split('p')[0];
+      const anchor = container.querySelector(`a[name^="${docId}"]`);
+      if (anchor) {
+        a.style.color = '#1d4ed8';
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      } else {
+        const path = state.docIdIndex[docId];
+        if (path) {
+          a.style.color = '#1d4ed8';
+          a.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadWorkshopPage({ dataset: { path, breadcrumb: path.replace('.html','').replace(/\//g,' › ') } });
+          });
+        } else {
+          a.addEventListener('click', (e) => e.preventDefault());
+        }
+      }
+      return;
+    }
+    if (href.startsWith('javascript:') || href === '#') {
+      a.addEventListener('click', (e) => e.preventDefault());
+    }
+  });
+
+  // publication-content / data-searchnum / data-procuid links
+  container.querySelectorAll('a.publication-content, [data-searchnum], [data-procuid][data-callfrom="procedure"]').forEach(el => {
+    const docId = el.getAttribute('data-searchnum') || el.getAttribute('data-procuid') || el.getAttribute('data-for');
+    if (!docId) return;
+    el.removeAttribute('onclick');
+    const path = state.docIdIndex[docId];
+    if (path) {
+      el.style.cursor = 'pointer';
+      el.style.color = '#1d4ed8';
+      el.style.textDecoration = 'underline';
+      el.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        loadWorkshopPage({ dataset: { path, breadcrumb: path.replace('.html','').replace(/\//g,' › ') } });
+      });
+    } else {
+      el.style.color = '#9ca3af';
+      el.style.cursor = 'not-allowed';
+      el.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
+    }
+  });
+
+  // data-for + data-show-ppt (DTC pinpoint links)
+  container.querySelectorAll('[data-for][data-show-ppt]').forEach(el => {
+    const docId = el.getAttribute('data-for');
+    if (!docId) return;
+    el.removeAttribute('onclick');
+    const path = state.docIdIndex[docId];
+    if (path) {
+      el.style.cursor = 'pointer';
+      el.style.color = '#1d4ed8';
+      el.style.textDecoration = 'underline';
+      el.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        loadWorkshopPage({ dataset: { path, breadcrumb: path.replace('.html','').replace(/\//g,' › ') } });
+      });
+    } else {
+      el.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
+    }
+  });
+
+  // <a> tags with connector names
+  container.querySelectorAll('a').forEach(a => {
+    const text = a.textContent.trim();
+    if (connectorMap[text]) {
+      a.style.cursor = 'pointer';
+      a.style.color = '#16a34a';
+      a.href = '#';
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchTab('connectors');
+        loadConnector(connectorMap[text]);
+      });
+    }
+  });
+}
+
+// ── Connector modal ──
+function rewriteSvgConnectorLinks(container) {
+  const connectorMap = {};
+  state.connectors.forEach(c => connectorMap[c.Name] = c);
+
+  container.querySelectorAll('[faceview]').forEach(el => {
+    const conn = state.connectors.find(c => c.FaceView === el.getAttribute('faceview'));
+    if (conn) {
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        switchTab('connectors');
+        loadConnector(conn);
+      });
+    }
+  });
+
+  container.querySelectorAll('text[fill="blue"]').forEach(el => {
+    const text = el.textContent.trim();
+    if (connectorMap[text]) {
+      el.style.cursor = 'pointer';
+      el.setAttribute('fill', '#16a34a');
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showConnectorModal(connectorMap[text]);
+      });
+    } else {
+      el.setAttribute('fill', '#60a5fa');
+    }
+  });
+
+  // PAGEREF links (e.g. id="PAGEREF_151-19") — module/component location references
+  container.querySelectorAll('[id^="PAGEREF_"]').forEach(el => {
+    const match = el.id.match(/^PAGEREF_(\d+)-(\d+)$/);
+    if (!match) return;
+    const cell    = match[1].padStart(3, '0');
+    const pageNum = parseInt(match[2]);
+    const entry   = state.wiringToc && state.wiringToc.find(e => e.Number === cell);
+    if (!entry) return;
+
+    // Strip Ford onclick
+    el.querySelectorAll('[onclick]').forEach(t => t.removeAttribute('onclick'));
+    el.style.cursor = 'pointer';
+
+    el.addEventListener('click', async (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const pageRef = el.id;
+      await navigateToWiringPage(entry, cell, pageNum);
+      // After load, poll for and highlight the PAGEREF element
+      const viewer = document.getElementById('svg-viewer');
+      const pollPageRef = (attempts = 0) => {
+        const target = viewer.querySelector(`#${CSS.escape(pageRef)}`);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const textEl = target.querySelector('text');
+          if (textEl) {
+            if (state.locationHighlight) {
+              state.locationHighlight.setAttribute('fill', state.locationHighlightOrigFill || '#60a5fa');
+            }
+            state.locationHighlight = textEl;
+            state.locationHighlightOrigFill = textEl.getAttribute('fill') || '#60a5fa';
+            textEl.setAttribute('fill', '#e8531a');
+          }
+        } else if (attempts < 20) {
+          setTimeout(() => pollPageRef(attempts + 1), 100);
+        }
+      };
+      pollPageRef();
+    });
+  });
+
+  // Suppress standalone PAGEREF handler when inside a dialog_ group
+  // (dialog_ handler below will manage those PAGEREFs via modal)
+  container.querySelectorAll('[id^="PAGEREF_"]').forEach(el => {
+    if (el.closest('[id^="dialog_"]')) {
+      el.querySelectorAll('[onclick]').forEach(t => t.removeAttribute('onclick'));
+    }
+  });
+
+  // dialog_ groups — unified handler for grounds, splices, and other named components
+  // These contain the component symbol + optional PAGEREF child
+  container.querySelectorAll('[id^="dialog_"]').forEach(el => {
+    const name = el.getAttribute('name') || el.id.replace('dialog_', '');
+    if (!name) return;
+
+    // Find PAGEREF child if present
+    const pagerefEl = el.querySelector('[id^="PAGEREF_"]');
+    let wiringCell = null, wiringPageNum = null, wiringEntry = null;
+    if (pagerefEl) {
+      const m = pagerefEl.id.match(/^PAGEREF_(\d+)-(\d+)$/);
+      if (m) {
+        wiringCell    = m[1].padStart(3, '0');
+        wiringPageNum = parseInt(m[2]);
+        wiringEntry   = state.wiringToc && state.wiringToc.find(e => e.Number === wiringCell);
+      }
+    }
+
+    // Strip Ford onclicks
+    el.querySelectorAll('[onclick]').forEach(t => t.removeAttribute('onclick'));
+    el.style.cursor = 'pointer';
+
+    el.addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      showComponentModal(name, wiringEntry, wiringCell, wiringPageNum);
+    });
+  });
+
+  // Splice points not inside a dialog_ wrapper (fallback)
+  container.querySelectorAll('[id^="SPLICE_"]').forEach(el => {
+    if (el.closest('[id^="dialog_"]')) return; // handled by dialog_ above
+    const match = el.id.match(/^SPLICE_([^~]+)~INDEX~/);
+    if (!match) return;
+    const name = match[1];
+    el.querySelectorAll('[onclick]').forEach(t => t.removeAttribute('onclick'));
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      loadItemLocation(name);
+    });
+  });
+
+  // Ground/other DATA elements not inside a dialog_ wrapper (fallback)
+  container.querySelectorAll('[id*="~DATA~"],[id*="~INDEX~"]').forEach(el => {
+    if (el.closest('[id^="dialog_"]')) return;
+    const match = el.id.match(/^[A-Z]+_([^~]+)~(?:DATA|INDEX)~/);
+    if (!match) return;
+    const name = match[1];
+    el.querySelectorAll('[onclick]').forEach(t => t.removeAttribute('onclick'));
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      loadItemLocation(name);
+    });
+  });
+
+  // Wiring cross-page links (cell=XX&page=XX)
+  const xlinkNS = 'http://www.w3.org/1999/xlink';
+  container.querySelectorAll('a').forEach(el => {
+    const href = el.getAttributeNS(xlinkNS, 'href') || el.getAttribute('href') || '';
+    if (!href.includes('cell=')) return;
+    const cellMatch = href.match(/cell=(\d+)/);
+    const pageMatch = href.match(/page=(\d+)/);
+    if (!cellMatch || !pageMatch) return;
+    const cell  = cellMatch[1].padStart(3, '0');
+    const page  = parseInt(pageMatch[1]);
+    const entry = state.wiringToc && state.wiringToc.find(e => e.Number === cell);
+    if (!entry) return;
+    el.removeAttributeNS(xlinkNS, 'href');
+    el.removeAttribute('href');
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', async (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const folder = `Wiring/${entry.Title}/`;
+      switchTab('wiring');
+      saveCurrentScroll();
+      history.pushState({ type: 'wiring', folder, cell, ws: 0, sv: 0, cf: 0 }, '',
+        '#' + encodeURIComponent('wiring:' + cell));
+      highlightWiringItem(cell);
+      await _loadSvgFolder(folder, cell, true);
+      const target = document.querySelector(`#svg-content > div:nth-child(${page})`);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+// ── Collapsible sections ──
+function makeCollapsible(container) {
+  // ── Fix bgcolor color swatches — copy to inline style so dark mode can't override ──
+  container.querySelectorAll('td[bgcolor]').forEach(td => {
+    td.style.setProperty('background-color', td.getAttribute('bgcolor'), 'important');
+  });
+
+  // DTC chart modules
+  container.querySelectorAll('[id^="SpanDtc"]').forEach(span => {
+    const div = container.querySelector(`#DivDtc${span.id.replace('SpanDtc', '')}`);
+    if (!div) return;
+    div.style.display = 'none';
+    const btn = document.createElement('span');
+    btn.textContent = '▶ ';
+    btn.style.cssText = 'cursor:pointer;font-size:11px;user-select:none;display:block;';
+    span.removeAttribute('onclick');
+    span.style.cursor = 'pointer';
+    const toggle = () => {
+      const open = div.style.display !== 'none';
+      div.style.display = open ? 'none' : 'block';
+      btn.textContent = open ? '▶ ' : '▼ ';
+    };
+    btn.addEventListener('click', toggle);
+    span.addEventListener('click', toggle);
+    span.parentNode.insertBefore(btn, span);
+    span.querySelectorAll('img').forEach(img => img.style.display = 'none');
+  });
+
+  // Pinpoint tests
+  const ppLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  container.querySelectorAll(ppLetters.map(l => `[id^="Span${l}"]`).join(',')).forEach(span => {
+    if (!span.classList.contains('isipppt')) return;
+    const div = container.querySelector(`#PPT${span.id.replace('Span', '')}`);
+    if (!div) return;
+    div.style.display = 'none';
+    const btn = document.createElement('span');
+    btn.textContent = '▶ ';
+    btn.style.cssText = 'cursor:pointer;font-size:11px;user-select:none;margin-right:4px;';
+    span.removeAttribute('onclick');
+    span.style.cursor = 'pointer';
+    const toggle = () => {
+      const open = div.style.display !== 'none';
+      div.style.display = open ? 'none' : 'block';
+      btn.textContent = open ? '▶ ' : '▼ ';
+    };
+    btn.addEventListener('click', toggle);
+    span.addEventListener('click', toggle);
+    span.parentNode.insertBefore(btn, span);
+    span.querySelectorAll('img').forEach(img => img.style.display = 'none');
+  });
+
+  // Hide hamburger buttons
+  container.querySelectorAll('[id="linkShowAllSteps"], [id="linkShowSingleStep"]').forEach(el => {
+    el.style.display = 'none';
+  });
+
+  // Print button
+  container.querySelectorAll('[id="pptPrint"]').forEach(el => {
+    const btn = document.createElement('span');
+    btn.textContent = '🖨';
+    btn.title = 'Print';
+    btn.style.cssText = 'cursor:pointer;font-size:14px;margin-left:10px;';
+    btn.addEventListener('click', (e) => { e.stopPropagation(); window.print(); });
+    el.parentNode.replaceChild(btn, el);
+  });
+
+  // Warning / arrowback images → emoji
+  container.querySelectorAll('img').forEach(img => {
+    const src = img.getAttribute('src') || '';
+    let emoji = null, style = '';
+    if (src.includes('/content/images/workshop/warning') || src.includes('/Content/images/workshop/warning')) {
+      emoji = '⚠️'; style = 'font-size:14px;vertical-align:middle;margin:0 4px;';
+    } else if (src.includes('/content/images/workshop/arrowback') || src.includes('/Content/images/workshop/arrowback')) {
+      emoji = '←'; style = 'font-size:14px;vertical-align:middle;margin:0 4px;font-weight:bold;';
+    } else if (src.includes('/content/images/workshop/video')) {
+      emoji = '🎬'; style = 'font-size:16px;vertical-align:middle;margin:0 4px;cursor:pointer;';
+    } else if (src.includes('/content/images/workshop/Help')) {
+      emoji = '❓'; style = 'font-size:16px;vertical-align:middle;margin:0 4px;cursor:pointer;';
+    }
+    if (emoji) {
+      const span = document.createElement('span');
+      span.textContent = emoji;
+      span.style.cssText = style;
+      img.parentNode.replaceChild(span, img);
+    }
+  });
+
+  // Pinpoint intro sections
+  container.querySelectorAll('[id="lnkPptStepIntro"]').forEach(link => {
+    const introDiv = link.parentElement?.querySelector('[data-content-type="intro"]');
+    if (!introDiv) return;
+    introDiv.style.display = 'none';
+    link.removeAttribute('onclick');
+    link.style.cursor = 'pointer';
+    link.querySelectorAll('img').forEach(img => img.style.display = 'none');
+    const btn = document.createElement('span');
+    btn.textContent = '▶ ';
+    btn.style.cssText = 'cursor:pointer;font-size:11px;user-select:none;margin-right:4px;';
+    const toggle = () => {
+      const open = introDiv.style.display !== 'none';
+      introDiv.style.display = open ? 'none' : 'block';
+      btn.textContent = open ? '▶ ' : '▼ ';
+    };
+    btn.addEventListener('click', toggle);
+    link.addEventListener('click', (e) => { e.preventDefault(); toggle(); });
+    link.parentNode.insertBefore(btn, link);
+  });
+}
+
+// ── Connector choice modal ──
+const modalOverlay  = document.getElementById('connector-modal-overlay');
+const modalTitle    = document.getElementById('connector-modal-title');
+const modalDesc     = document.getElementById('connector-modal-desc');
+const modalFaceBtn  = document.getElementById('connector-modal-face');
+const modalLocBtn   = document.getElementById('connector-modal-location');
+const modalSpinner  = document.getElementById('connector-modal-spinner');
+
+// ── Modal functions ──
+function showConnectorModal(conn) {
+  modalTitle.textContent = conn.Name;
+  modalDesc.textContent  = conn.Desc || '';
+  modalSpinner.style.display = 'none';
+
+  // Reset buttons to connector defaults
+  modalFaceBtn.style.display = 'block';
+  modalFaceBtn.textContent   = 'View Face & Pinout';
+  modalLocBtn.style.display  = 'block';
+  modalLocBtn.textContent    = 'View Location on Vehicle';
+  modalLocBtn.disabled       = false;
+
+  // Remove any extra wiring button
+  const wiringBtn = document.getElementById('connector-modal-wiring');
+  if (wiringBtn) wiringBtn.style.display = 'none';
+
+  modalFaceBtn.onclick = () => {
+    closeConnectorModal();
+    switchTab('connectors');
+    loadConnector(conn);
+  };
+
+  modalLocBtn.onclick = async () => {
+    modalLocBtn.style.display  = 'none';
+    modalFaceBtn.style.display = 'none';
+    modalSpinner.style.display = 'block';
+    closeConnectorModal();
+    await loadConnectorLocation(conn);
+    // Reset for next use
+    modalFaceBtn.style.display = 'block';
+    modalSpinner.style.display = 'none';
+  };
+
+  modalOverlay.classList.add('visible');
+}
+
+function showComponentModal(name, wiringEntry, wiringCell, wiringPageNum) {
+  modalTitle.textContent = name;
+  modalDesc.textContent  = '';
+  modalSpinner.style.display = 'none';
+
+  // No face/pinout for non-connectors
+  modalFaceBtn.style.display = 'none';
+
+  // Location button
+  modalLocBtn.style.display  = 'block';
+  modalLocBtn.textContent    = 'View Location on Vehicle';
+  modalLocBtn.disabled       = false;
+  modalLocBtn.onclick = async () => {
+    closeConnectorModal();
+    modalFaceBtn.style.display = 'block';
+    await loadItemLocation(name);
+  };
+
+  // Wiring button — create once, reuse
+  let wiringBtn = document.getElementById('connector-modal-wiring');
+  if (!wiringBtn) {
+    wiringBtn = document.createElement('button');
+    wiringBtn.id        = 'connector-modal-wiring';
+    wiringBtn.className = 'connector-modal-btn';
+    modalLocBtn.after(wiringBtn);
+  }
+
+  if (wiringEntry && wiringPageNum !== null) {
+    wiringBtn.style.display = 'block';
+    wiringBtn.textContent   = `View in Wiring (${parseInt(wiringCell)}-${wiringPageNum})`;
+    wiringBtn.onclick = async () => {
+      closeConnectorModal();
+      modalFaceBtn.style.display = 'block';
+      await navigateToWiringPage(wiringEntry, wiringCell, wiringPageNum);
+    };
+  } else {
+    wiringBtn.style.display = 'none';
+  }
+
+  modalOverlay.classList.add('visible');
+}
+
+function closeConnectorModal() {
+  modalOverlay.classList.remove('visible');
+}
+
+// ── navigateToWiringPage ──
+async function navigateToWiringPage(entry, cell, pageNum) {
+  const folder = `Wiring/${entry.Title.replace(/\//g, '-')}/`;
+  switchTab('wiring');
+  saveCurrentScroll();
+  history.pushState(
+    { type: 'wiring', folder, cell, ws: 0, sv: 0, cf: 0 }, '',
+    '#' + encodeURIComponent('wiring:' + cell)
+  );
+  highlightWiringItem(cell);
+
+  let filename = null;
+  try {
+    const resp = await fetch(encodePath(folder) + 'pageList.json');
+    const pageList = await resp.json();
+    const svgFiles = pageList
+      .filter(p => p && p.cell && p.page)
+      .map(p => `${p.cell}_${p.page}.svg`);
+    filename = svgFiles[pageNum - 1] || null;
+  } catch (err) {
+    console.error('navigateToWiringPage: could not load pageList', err);
+  }
+  if (!filename) return;
+
+  showLoading();
+  hideAll();
+  const viewer = document.getElementById('svg-viewer');
+  viewer.style.display = 'block';
+  document.getElementById('svg-pages').innerHTML = '';
+  const svgContent = document.getElementById('svg-content');
+  svgContent.innerHTML = '';
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'border-bottom:1px solid #ddd;margin-bottom:8px;';
+  svgContent.appendChild(wrapper);
+  await loadSvgFile(folder, filename, wrapper);
+  hideLoading();
+}
+
+
+// Close on overlay click or Escape
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) closeConnectorModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeConnectorModal();
+});
+
+// ── Shared location finder (used by both connector modal and splice clicks) ──
+async function loadItemLocation(name) {
+  // Clear any previous persistent highlight
+  if (state.locationHighlight) {
+    state.locationHighlight.setAttribute('fill', state.locationHighlightOrigFill || 'black');
+    state.locationHighlight = null;
+    state.locationHighlightOrigFill = null;
+  }
+
+  const locEntry = state.wiringToc && state.wiringToc.find(e => e.Number === '151');
+  if (!locEntry) {
+    console.warn('Component Location Views entry not found in wiring TOC');
+    return;
+  }
+
+  const folder     = `Wiring/${locEntry.Title.replace(/\//g, '-')}/`;
+  // Name may appear anywhere in a combined id like ITEM_S322,S323_ALL
+  // Match: starts with name, or preceded by comma
+  const itemExact  = `ITEM_${name}_`;   // e.g. ITEM_S222_  (sole entry)
+  const itemFirst  = `ITEM_${name},`;   // e.g. ITEM_S322,  (first in combined)
+  const itemCombo  = `,${name}_`;       // e.g. ,S323_      (last in combined)
+  const itemCombo2 = `,${name},`;       // e.g. ,S323,      (middle in combined)
+
+  // Fetch pageList
+  let pageList;
+  try {
+    const resp = await fetch(encodePath(folder) + 'pageList.json');
+    pageList = await resp.json();
+  } catch (e) {
+    console.error('Could not load pageList.json for location views', e);
+    return;
+  }
+
+  const svgFiles = pageList
+    .filter(p => p && p.cell && p.page)
+    .map(p => ({ label: `${p.cell}_${p.page}`, filename: `${p.cell}_${p.page}.svg` }));
+
+  // Search SVG text for the ITEM prefix
+  let foundFile = null;
+  for (const f of svgFiles) {
+    try {
+      const url  = encodePath(folder) + encodeURIComponent(f.filename);
+      const resp = await fetch(url);
+      if (!resp.ok) continue;
+      const text = await resp.text();
+      if (text.includes(`id="${itemExact}`) || text.includes(`id="${itemFirst}`) || text.includes(itemCombo) || text.includes(itemCombo2)) {
+        foundFile = f;
+        break;
+      }
+    } catch (e) {
+      continue;
+    }
+  }
+
+  // Push history and highlight wiring sidebar
+  switchTab('wiring');
+  saveCurrentScroll();
+  history.pushState(
+    { type: 'wiring', folder, cell: '151', ws: 0, sv: 0, cf: 0 }, '',
+    '#' + encodeURIComponent('wiring:151')
+  );
+  highlightWiringItem('151');
+
+  if (!foundFile) {
+    // Not found — load all pages as fallback
+    await _loadSvgFolder(folder, '151', true);
+    return;
+  }
+
+  // Load only the matching page
+  showLoading();
+  hideAll();
+  const viewer = document.getElementById('svg-viewer');
+  viewer.style.display = 'block';
+  document.getElementById('svg-pages').innerHTML = '';
+  const svgContent = document.getElementById('svg-content');
+  svgContent.innerHTML = '';
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'border-bottom:1px solid #ddd;margin-bottom:8px;';
+  svgContent.appendChild(wrapper);
+  await loadSvgFile(folder, foundFile.filename, wrapper);
+  hideLoading();
+
+  // Poll and highlight
+  const highlightPoll = (attempts = 0) => {
+    // Match exact (ITEM_S222_ALL) or combined (ITEM_S322,S323_ALL)
+    const el     = viewer.querySelector(`[id^="${itemExact}"][id$="_ALL"], [id^="${itemFirst}"][id$="_ALL"], [id*="${itemCombo}"][id$="_ALL"], [id*="${itemCombo2}"][id$="_ALL"]`);
+    const textEl = viewer.querySelector(`[id^="${itemExact}"][id$="_TEXT"], [id^="${itemFirst}"][id$="_TEXT"], [id*="${itemCombo}"][id$="_TEXT"], [id*="${itemCombo2}"][id$="_TEXT"]`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const target = textEl || el;
+      if (state.locationHighlight) {
+        state.locationHighlight.setAttribute('fill', state.locationHighlightOrigFill || 'black');
+      }
+      state.locationHighlightOrigFill = target.getAttribute('fill') || 'black';
+      target.setAttribute('fill', '#e8531a');
+      state.locationHighlight = target;
+    } else if (attempts < 20) {
+      setTimeout(() => highlightPoll(attempts + 1), 100);
+    }
+  };
+  highlightPoll();
+}
+
+// ── Connector location loader (calls shared finder) ──
+async function loadConnectorLocation(conn) {
+  // Clear any previous persistent highlight
+  if (state.locationHighlight) {
+    state.locationHighlight.setAttribute('fill', state.locationHighlightOrigFill || 'black');
+    state.locationHighlight = null;
+    state.locationHighlightOrigFill = null;
+  }
+
+  const locEntry = state.wiringToc && state.wiringToc.find(e => e.Number === '151');
+  if (!locEntry) {
+    console.warn('Component Location Views entry not found in wiring TOC');
+    return;
+  }
+
+  const folder     = `Wiring/${locEntry.Title.replace(/\//g, '-')}/`;
+  const name       = conn.Name;
+  const itemExact  = `ITEM_${name}_`;
+  const itemFirst  = `ITEM_${name},`;
+  const itemCombo  = `,${name}_`;
+  const itemCombo2 = `,${name},`;
+  let pageList;
+  try {
+    const resp = await fetch(encodePath(folder) + 'pageList.json');
+    pageList = await resp.json();
+  } catch (e) {
+    console.error('Could not load pageList.json for location views', e);
+    return;
+  }
+
+  const svgFiles = pageList
+    .filter(p => p && p.cell && p.page)
+    .map(p => ({ label: `${p.cell}_${p.page}`, filename: `${p.cell}_${p.page}.svg` }));
+
+  let foundFile = null;
+  for (const f of svgFiles) {
+    try {
+      const url  = encodePath(folder) + encodeURIComponent(f.filename);
+      const resp = await fetch(url);
+      if (!resp.ok) continue;
+      const text = await resp.text();
+      if (text.includes(`id="${itemExact}`) || text.includes(`id="${itemFirst}`) || text.includes(itemCombo) || text.includes(itemCombo2)) {
+        foundFile = f;
+        break;
+      }
+    } catch (e) {
+      continue;
+    }
+  }
+
+  // Switch to wiring tab and push history
+  switchTab('wiring');
+  saveCurrentScroll();
+  history.pushState(
+    { type: 'wiring', folder, cell: '151', ws: 0, sv: 0, cf: 0 }, '',
+    '#' + encodeURIComponent('wiring:151')
+  );
+  highlightWiringItem('151');
+
+  if (!foundFile) {
+    await _loadSvgFolder(folder, '151', true);
+    return;
+  }
+
+  showLoading();
+  hideAll();
+  const viewer = document.getElementById('svg-viewer');
+  viewer.style.display = 'block';
+  document.getElementById('svg-pages').innerHTML = '';
+  const svgContent = document.getElementById('svg-content');
+  svgContent.innerHTML = '';
+
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'border-bottom:1px solid #ddd;margin-bottom:8px;';
+  svgContent.appendChild(wrapper);
+  await loadSvgFile(folder, foundFile.filename, wrapper);
+  hideLoading();
+
+  const highlightPoll = (attempts = 0) => {
+    const el     = viewer.querySelector(`[id^="${itemExact}"][id$="_ALL"], [id^="${itemFirst}"][id$="_ALL"], [id*="${itemCombo}"][id$="_ALL"], [id*="${itemCombo2}"][id$="_ALL"]`);
+    const textEl = viewer.querySelector(`[id^="${itemExact}"][id$="_TEXT"], [id^="${itemFirst}"][id$="_TEXT"], [id*="${itemCombo}"][id$="_TEXT"], [id*="${itemCombo2}"][id$="_TEXT"]`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const target = textEl || el;
+      if (state.locationHighlight) {
+        state.locationHighlight.setAttribute('fill', state.locationHighlightOrigFill || 'black');
+      }
+      state.locationHighlightOrigFill = target.getAttribute('fill') || 'black';
+      target.setAttribute('fill', '#e8531a');
+      state.locationHighlight = target;
+    } else if (attempts < 20) {
+      setTimeout(() => highlightPoll(attempts + 1), 100);
+    }
+  };
+  highlightPoll();
+}
+
+// ── Video rewriting ──
+// Resolved bcove.video short URL -> videoId mapping
+const BCOVE_MAP = {
+  'https://bcove.video/2HK0J57': '6083022350001',
+  'https://bcove.video/2PF2GGv': '6083020853001',
+  'https://bcove.video/2PFUm9s': '6083018252001',
+  'https://bcove.video/2PPqmYW': '6083020043001',
+  'https://bcove.video/2ZjQlLs': '6053614764001',
+  'https://bcove.video/2xYUQMe': '6062583508001',
+  'https://bcove.video/32ilA7w': '6083013947001',
+  'https://bcove.video/32k6374': '6083020852001',
+  'https://bcove.video/32stnzH': '6083020042001',
+  'https://bcove.video/32vT3eV': '6083019025001',
+  'https://bcove.video/39KgIhy': '6246926908001',
+  'https://bcove.video/3HnRrhn': '6377129966112',
+  'https://bcove.video/3T7Ho2K': '6347421725112',
+  'https://bcove.video/3T9fNyg': '6347422807112',
+  'https://bcove.video/3TbbZg9': '6347422805112',
+  'https://bcove.video/3UADI8m': '6312310745112',
+  'https://bcove.video/3XJGFHL': '6355833056112',
+  'https://bcove.video/3aIgKWn': '6183003359001',
+  'https://bcove.video/3hhHoI7': '6183001681001',
+  'https://bcove.video/3liNOOb': '6319980220112',
+  'https://bcove.video/3nhr7Lp': '6323086562112',
+  'https://bcove.video/3nq8wub': '6282473865001',
+  'https://bcove.video/3oRh9OT': '6296094543001',
+  'https://bcove.video/3sWX3CI': '6246927734001',
+  'https://bcove.video/3tI6FBc': '6242727197001',
+  'https://bcove.video/43m5ER6': '6328161998112',
+  'https://bcove.video/4bJy8Jv': '6347422691112',
+  'https://bcove.video/4bQcvas': '6347421035112',
+  'https://bcove.video/4fHY8aC': '6377129278112',
+};
+let _onlineStatus = null;
+let _onlineCheckedAt = 0;
+const ONLINE_TTL = 5 * 60 * 1000; // 5 minutes
+
+async function checkOnline() {
+  const now = Date.now();
+  if (_onlineStatus !== null && (now - _onlineCheckedAt) < ONLINE_TTL) {
+    return _onlineStatus;
+  }
+  try {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 3000);
+    await fetch('https://www.google.com/generate_204', {
+      method: 'GET',
+      mode: 'no-cors',
+      signal: ctrl.signal,
+    });
+    _onlineStatus = true;
+  } catch (e) {
+    _onlineStatus = false;
+  }
+  _onlineCheckedAt = Date.now();
+  return _onlineStatus;
+}
+
+async function rewriteVideos(container) {
+  const online = await checkOnline();
+  if (online) return; // Brightcove iframes work fine online, leave them alone
+
+  container.querySelectorAll('iframe[src*="brightcove"], iframe[src*="bcove.video"]').forEach(iframe => {
+    const src   = iframe.getAttribute('src') || '';
+    // Try ?videoId= param first, then BCOVE_MAP lookup
+    const paramMatch = src.match(/videoId=(\d+)/);
+    const videoId = paramMatch ? paramMatch[1] : (BCOVE_MAP[src] || null);
+
+    // Find the wrapper div (Ford wraps iframes in a padding-bottom aspect ratio div)
+    const wrapper = iframe.closest('div[style*="padding-bottom"]') || iframe.parentElement;
+
+    let replacement;
+    if (videoId) {
+      // Replace with local video — HEAD check to confirm file exists
+      fetch(`videos/${videoId}.mp4`, { method: 'HEAD' })
+        .then(r => {
+          if (r.ok) {
+            const video = document.createElement('video');
+            video.src      = `videos/${videoId}.mp4`;
+            video.controls = true;
+            video.style.cssText = 'width:100%;max-width:100%;display:block;margin:8px 0;border-radius:4px;background:#000;';
+            replaceIframe(iframe, wrapper, video);
+          } else {
+            replaceIframe(iframe, wrapper, offlineMsg());
+          }
+        })
+        .catch(() => replaceIframe(iframe, wrapper, offlineMsg()));
+    } else {
+      replaceIframe(iframe, wrapper, offlineMsg());
+    }
+  });
+}
+
+function replaceIframe(iframe, wrapper, replacement) {
+  if (wrapper && wrapper !== iframe.parentElement.parentElement) {
+    wrapper.style.cssText = 'margin:8px 0;';
+    wrapper.innerHTML = '';
+    wrapper.appendChild(replacement);
+  } else {
+    iframe.replaceWith(replacement);
+  }
+}
+
+function offlineMsg() {
+  const msg = document.createElement('div');
+  msg.style.cssText = 'padding:16px;background:#f3f4f6;border-radius:4px;color:#6b7280;font-size:12px;margin:8px 0;text-align:center;';
+  msg.textContent = 'Video unavailable offline';
+  return msg;
+}
+
+// ── Sidebar resize ──
+const resizeHandle = document.getElementById('resize-handle');
+const sidebar = document.getElementById('sidebar');
+let resizing = false;
+
+resizeHandle.addEventListener('mousedown', () => {
+  resizing = true;
+  document.body.style.userSelect = 'none';
+  document.body.style.cursor = 'col-resize';
+});
+document.addEventListener('mousemove', (e) => {
+  if (!resizing) return;
+  sidebar.style.width = Math.max(200, Math.min(500, e.clientX)) + 'px';
+});
+document.addEventListener('mouseup', () => {
+  resizing = false;
+  document.body.style.userSelect = '';
+  document.body.style.cursor = '';
+});
+
+// ── Start ──
+init();
+</script>
+</body>
+</html>

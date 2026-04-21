@@ -14,6 +14,7 @@ import savePage, { WiringFetchPageParams } from "./savePage";
 import saveConnector from "./saveConnector";
 import { saveLocIndex } from "./saveLocIndex";
 import { SaveOptions } from "../workshop/saveEntireManual";
+import { sanitizeName } from "../utils";
 
 export default async function saveEntireWiring(
   path: string,
@@ -45,11 +46,12 @@ export default async function saveEntireWiring(
     }
   }
 
+  toc.forEach(doc => { doc.Title = sanitizeName(doc.Title); });
   await writeFile(join(wiringPath, "toc.json"), JSON.stringify(toc, null, 2));
 
   for (let i = 0; i < toc.length; i++) {
     const doc = toc[i];
-    const sanitizedTitle = doc.Title.replace(/\//g, "-");
+    const sanitizedTitle = sanitizeName(doc.Title);
 
     // Create a folder for each section in the TOC
     const sectionPath = join(wiringPath, sanitizedTitle);

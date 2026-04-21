@@ -2,8 +2,6 @@
 logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
@@ -70,7 +68,6 @@ web_modules/
 *.tgz
 
 # Yarn Integrity file
-.yarn-integrity
 
 # dotenv environment variable files
 .env
@@ -119,12 +116,6 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-# yarn v2
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
 
 .DS_Store
 .idea/
@@ -133,3 +124,11 @@ manuals/
 *.bak
 patchConnectorSvgs.ts
 src.textClipping
+
+# FordManual.py runtime files
+session.json
+config.json
+cookies.txt
+
+# Scraper output
+manual-output/
