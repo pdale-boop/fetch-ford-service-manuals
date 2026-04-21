@@ -110,12 +110,15 @@ Structure:
 
 Alternatively, copy `templates/params.json.template` to `config.json` and fill in the values.
 
-**`cookies.txt`** — your PTS session cookies:
+**`cookies.txt`** — your PTS session cookies (two sources, combined into one file):
 
-1. In DevTools Network tab, find the `TableofContent` request to `fordservicecontent.com`
+1. In DevTools Network tab, find the `TableOfContents` (plural, with 's') request to `fordtechservice.dealerconnection.com`
 2. Click it → Request Headers → find the `Cookie:` header
 3. Copy everything **after** `Cookie: ` into `cookies.txt`
-4. **Firefox users:** Enable the **Raw** toggle before copying, or you'll get invalid character errors
+4. Now find the `TableofContent` (singular, no 's') request to `fordservicecontent.com`
+5. Copy its `Cookie:` header value
+6. In `cookies.txt`, add `; ` after the first paste, then paste the second set — the file must be **one line** with both blocks
+7. **Firefox users:** Enable the **Raw** toggle in Request Headers before copying each time, or you'll get invalid character errors
 
 ### Run the scraper
 
@@ -197,16 +200,16 @@ This fork includes the following fixes and improvements over [iamtheyammer/fetch
 **Bug fixes:**
 - Fixed broken wiring SVG fetching: corrected Ford API URL (`fordservicecontent.dealerconnection.com` → `fordservicecontent.com`)
 - Fixed wiring page list handling: Ford's API now returns objects instead of strings for some sub-pages; both formats are handled correctly
-- Fixed filename sanitization: colon/special character replacement now uses the same logic across all platforms (no more platform-dependent naming)
+- Sanitized output filenames for cross-platform compatibility
 
 **Guided setup:**
 - `FordManual.py` interactive wizard handles the entire workflow including dependency installation, parameter collection, and scraping
 - `build_viewer.py` optional post-processing for offline viewing with path shortening
 
-**Connector pages rewritten:**
-- Connectors are now fetched via Ford's API directly (`GetConnectorDetails`, `GetConnectorImages`, `GetPigtailsDetails`, `GetServicePartNumber`, `GetTerminalPartSizes`) rather than driving a headless browser
-- Each connector is saved as a rich, self-contained HTML file
-- No longer dependent on Playwright for connector pages
+**Connector and wiring pages rewritten:**
+- Upstream used Playwright to navigate PTS pages for connectors and wiring diagrams, which was frequently blocked by Akamai's bot detection
+- Connectors and wiring SVGs are now fetched via Ford's API directly, bypassing Akamai
+- Each connector is saved as a rich, self-contained HTML file with face SVG, pin table, terminal part numbers, and pigtail details
 
 **Output format:**
 - Default output is now HTML only (faster, better for browsing, works offline)
