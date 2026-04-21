@@ -228,6 +228,35 @@ async function modernWorkshop(
   const coverPath = join(outputPath, "cover");
   await writeFile(coverPath + ".html", pageHTML);
 
+  // Save vehicle info for build_viewer.py branding
+  const vehicleInfo = {
+    vehicleId: config.workshop.vehicleId,
+    bookTitle: config.workshop.bookTitle,
+    modelYear: config.workshop.modelYear,
+  };
+  await writeFile(
+    join(outputPath, "vehicle_info.json"),
+    JSON.stringify(vehicleInfo, null, 2)
+  );
+  console.log("Saved vehicle_info.json");
+
+  // Download cover image
+  const coverImgUrl = `https://www.fordservicecontent.com/images/imagen/imagen2.dll?id=${config.workshop.vehicleId}VEHIC&s=JPG&p=1&t=JPG`;
+  try {
+    const { execFile } = require("child_process");
+    const { promisify } = require("util");
+    const execFileAsync = promisify(execFile);
+    const coverJpgPath = join(outputPath, "cover.jpg");
+    await execFileAsync("curl", [
+      "-s", "-f", "--max-time", "30",
+      "-o", coverJpgPath,
+      coverImgUrl,
+    ]);
+    console.log("Downloaded cover.jpg");
+  } catch (e) {
+    console.warn("Could not download cover image:", e);
+  }
+
   console.log("Saving manual files...");
   // Load path_mapping.json if it exists (enables skip logic for shortened files)
   const mappingPath = join(outputPath, "path_mapping.json");

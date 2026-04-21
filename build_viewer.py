@@ -208,7 +208,59 @@ def copy_index(output_dir):
     if not INDEX_SRC.exists():
         print(f"  ERROR: index.html not found at {INDEX_SRC}")
         return False
-    shutil.copy2(INDEX_SRC, dst)
+
+    content = INDEX_SRC.read_text(encoding='utf-8')
+    book_title = 'Ford'
+
+    # Inject vehicle branding if vehicle_info.json exists
+    info_path = output_dir / 'vehicle_info.json'
+    if info_path.exists():
+        try:
+            with open(info_path, encoding='utf-8') as f:
+                info = json.load(f)
+            book_title = info.get('bookTitle', 'Ford')
+            # bookTitle is typically "2025 Maverick" — split for header styling
+            parts = book_title.split(' ', 1)
+            if len(parts) == 2 and parts[0].isdigit():
+                header_logo = f'{parts[1]}<span>{parts[0]}</span> · Service Manual'
+                welcome_logo = f'{parts[1]}<span>{parts[0]}</span> · Service Manual'
+            else:
+                header_logo = f'{book_title} · Service Manual'
+                welcome_logo = f'{book_title} · Service Manual'
+            page_title = f'{book_title} — Service Manual'
+
+            content = re.sub(
+                r'<!--VEHICLE_TITLE-->.*?<!--/VEHICLE_TITLE-->',
+                header_logo, content
+            )
+            content = re.sub(
+                r'<!--WELCOME_TITLE-->.*?<!--/WELCOME_TITLE-->',
+                welcome_logo, content
+            )
+            content = re.sub(
+                r'<!--PAGE_TITLE-->.*?<!--/PAGE_TITLE-->',
+                page_title, content
+            )
+            print(f"  Branded as: {book_title}")
+        except Exception as e:
+            print(f"  WARNING: Could not read vehicle_info.json: {e}")
+
+    # Inject cover image if cover.jpg exists
+    cover_path = output_dir / 'cover.jpg'
+    if cover_path.exists():
+        try:
+            import base64
+            img_data = base64.b64encode(cover_path.read_bytes()).decode('ascii')
+            img_tag = f'<img src="data:image/jpeg;base64,{img_data}" alt="{book_title}" class="welcome-truck">'
+            content = re.sub(
+                r'<!--COVER_IMAGE-->.*?<!--/COVER_IMAGE-->',
+                img_tag, content
+            )
+            print(f"  Injected cover image.")
+        except Exception as e:
+            print(f"  WARNING: Could not inject cover image: {e}")
+
+    dst.write_text(content, encoding='utf-8')
     print(f"  Copied index.html.")
     return True
 
