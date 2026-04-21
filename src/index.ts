@@ -16,6 +16,7 @@ import processCLIArgs, { CLIArgs } from "./processCLIArgs";
 import fetchPre2003AlphabeticalIndex from "./pre-2003/fetchAlphabeticalIndex";
 import saveEntirePre2003AlphabeticalIndex from "./pre-2003/saveEntireAlphabeticalIndex";
 import client from "./client";
+import saveStream from "./utils";
 import {
   USER_AGENT,
   SEC_CH_UA,
@@ -240,18 +241,15 @@ async function modernWorkshop(
   );
   console.log("Saved vehicle_info.json");
 
-  // Download cover image
-  const coverImgUrl = `https://www.fordservicecontent.com/images/imagen/imagen2.dll?id=${config.workshop.vehicleId}VEHIC&s=JPG&p=1&t=JPG`;
+  // Download cover image via axios client (has cookies)
+  const coverImgUrl = `https://www.fordservicecontent.com/images/imagen/imagen2.dll?id=${config.workshop.book}VEHIC&s=JPG&p=1&t=JPG`;
   try {
-    const { execFile } = require("child_process");
-    const { promisify } = require("util");
-    const execFileAsync = promisify(execFile);
     const coverJpgPath = join(outputPath, "cover.jpg");
-    await execFileAsync("curl", [
-      "-s", "-f", "--max-time", "30",
-      "-o", coverJpgPath,
-      coverImgUrl,
-    ]);
+    const coverReq = await client({
+      url: coverImgUrl,
+      responseType: "stream",
+    });
+    await saveStream(coverReq.data, coverJpgPath);
     console.log("Downloaded cover.jpg");
   } catch (e) {
     console.warn("Could not download cover image:", e);
