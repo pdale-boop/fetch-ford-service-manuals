@@ -159,7 +159,25 @@ This will:
 - Copy `index.html` into the output directory
 - Optionally launch a local web server
 
+The viewer features include:
+- Sidebar tree navigation, wiring diagrams, and connector views
+- Full-text search across all workshop pages, connectors, and wiring
+- Cmd/Ctrl+scroll zoom with floating zoom controls
+- Dark mode (follows system preference)
+- Print support (coming soon)
+- Cross-links between workshop pages, connectors, and wiring diagrams
+
 The viewer works entirely offline — no internet connection required after setup.
+
+#### Workshop illustration SVGs
+
+Workshop pages with interactive hotspot illustrations reference SVGs hosted on Ford's CDN. During scraping, these are automatically downloaded, CSS-patched (text labels made visible, callout overlays hidden), and saved alongside the HTML files. The HTML is rewritten to use local `<object>` tags — no internet connection needed to view illustrations.
+
+If you need to re-process SVGs on an existing output directory (e.g. after a partial scrape), you can run the step standalone:
+
+```
+python3 process_workshop_svgs.py /path/to/output/
+```
 
 **Re-scraping after shortening:** If you run the scraper again into a directory that's already been through `build_viewer.py`, the scraper will check `path_mapping.json` to find existing shortened files and skip them correctly.
 
@@ -210,6 +228,13 @@ This fork includes the following fixes and improvements over [iamtheyammer/fetch
 - Upstream used Playwright to navigate PTS pages for connectors and wiring diagrams, which was frequently blocked by Akamai's bot detection
 - Connectors and wiring SVGs are now fetched via Ford's API directly, bypassing Akamai
 - Each connector is saved as a rich, self-contained HTML file with face SVG, pin table, terminal part numbers, and pigtail details
+
+**Workshop illustration SVGs:**
+- Hotspot illustration SVGs are automatically downloaded from Ford's CDN at the end of the workshop scrape
+- CSS patched so text labels (`.sttxt`) are visible and callout overlays (`.stcallout`) are hidden
+- HTML rewritten from Ford's `data-svg-path` divs to local `<object>` tags for fully offline viewing
+- Downloads use `curl` to avoid Akamai TLS fingerprinting blocks
+- Also available as a standalone Python script (`process_workshop_svgs.py`) for re-processing existing output
 
 **Output format:**
 - Default output is now HTML only (faster, better for browsing, works offline)

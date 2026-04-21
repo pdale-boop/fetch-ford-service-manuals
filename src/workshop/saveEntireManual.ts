@@ -6,6 +6,7 @@ import client from "../client";
 import { Page } from "playwright";
 import { CLIArgs } from "../processCLIArgs";
 import saveStream, { sanitizeName } from "../utils";
+import processWorkshopSvgs from "./processWorkshopSvgs";
 
 export type SaveOptions = Pick<CLIArgs, "savePDF" | "pdfOnly" | "ignoreSaveErrors">;
 
@@ -16,7 +17,8 @@ export default async function saveEntireManual(
   browserPage: Page,
   options: SaveOptions,
   pathMapping?: Record<string, string>,
-  outputRoot?: string
+  outputRoot?: string,
+  _isTopLevel: boolean = true
 ) {
   const exploded = Object.entries(toc);
 
@@ -127,8 +129,15 @@ export default async function saveEntireManual(
         browserPage,
         options,
         pathMapping,
-        outputRoot
+        outputRoot,
+        false
       );
     }
+  }
+
+  // After all workshop pages are downloaded, process SVGs (top-level only)
+  if (_isTopLevel) {
+    const root = outputRoot || path;
+    await processWorkshopSvgs(root);
   }
 }

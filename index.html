@@ -103,6 +103,7 @@
     border-radius: 6px;
     max-height: 400px;
     overflow-y: auto;
+    overflow-x: auto;
     z-index: 200;
     display: none;
   }
@@ -152,7 +153,7 @@
     align-items: center;
     gap: 8px;
     color: var(--muted);
-    font-size: 11px;
+    font-size: inherit;
     font-family: var(--mono);
   }
 
@@ -205,6 +206,7 @@
     display: none;
     flex: 1;
     overflow-y: auto;
+    overflow-x: auto;
     padding: 8px 0;
   }
 
@@ -225,7 +227,7 @@
     padding: 4px 12px;
     cursor: pointer;
     color: var(--muted);
-    font-size: 11px;
+    font-size: inherit;
     font-weight: 500;
     transition: color 0.1s, background 0.1s;
     user-select: none;
@@ -259,7 +261,7 @@
     padding: 3px 12px;
     cursor: pointer;
     color: var(--muted);
-    font-size: 11px;
+    font-size: inherit;
     transition: color 0.1s, background 0.1s;
     border-left: 2px solid transparent;
   }
@@ -286,7 +288,7 @@
     border-radius: 4px;
     color: var(--text);
     font-family: var(--sans);
-    font-size: 11px;
+    font-size: inherit;
     padding: 5px 10px;
     outline: none;
   }
@@ -304,6 +306,7 @@
   .connector-list {
     flex: 1;
     overflow-y: auto;
+    overflow-x: auto;
     padding: 4px 0;
   }
 
@@ -326,7 +329,7 @@
 
   .connector-name {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: inherit;
     color: var(--accent2);
   }
 
@@ -371,7 +374,7 @@
   .badge-locindex { background: #1e1b4b; color: #a5b4fc; }
 
   .wiring-title {
-    font-size: 11px;
+    font-size: inherit;
     color: var(--muted);
     transition: color 0.1s;
   }
@@ -396,7 +399,7 @@
     align-items: center;
     padding: 0 16px;
     gap: 6px;
-    font-size: 11px;
+    font-size: inherit;
     color: var(--muted);
     font-family: var(--mono);
     flex-shrink: 0;
@@ -407,6 +410,42 @@
   .bc-sep { opacity: 0.4; }
   .bc-item { color: var(--muted); }
   .bc-item.current { color: var(--text); }
+
+  #zoom-controls {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    z-index: 20;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  #zoom-controls button {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 0 5px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  #zoom-controls button:hover {
+    background: var(--border);
+    color: var(--text);
+  }
+  #zoom-indicator {
+    color: var(--muted);
+    min-width: 36px;
+    text-align: center;
+    transition: opacity 0.3s;
+  }
 
   #content-body {
     flex: 1;
@@ -419,6 +458,7 @@
     position: absolute;
     inset: 0;
     overflow-y: auto;
+    overflow-x: auto;
     padding: 24px 32px;
     background: #fafaf9;
     color: #1c1917;
@@ -495,6 +535,7 @@
     position: absolute;
     inset: 0;
     overflow-y: auto;
+    overflow-x: auto;
     display: none;
     background: #fafaf9;
     color: #1c1917;
@@ -540,19 +581,19 @@
   #connector-frame .face-col { flex: 0 0 280px; }
   #connector-frame .face-col svg { width: 280px; height: auto; }
   #connector-frame .pin-col { flex: 1; }
-  #connector-frame .pintable { width: 100%; border-collapse: collapse; font-size: 11px; }
+  #connector-frame .pintable { width: 100%; border-collapse: collapse; font-size: inherit; }
   #connector-frame .pintable th { background: #ccc; border: 1px solid #999; padding: 4px 6px; text-align: center; }
   #connector-frame .pintable td { border: 1px solid #999; padding: 3px 6px; }
   #connector-frame .pintable tr:nth-child(even) td { background: #eee; }
   #connector-frame .section-label { font-weight: bold; margin: 10px 0 4px 0; font-size: 12px; }
-  #connector-frame .termtable { width: 60%; border-collapse: collapse; font-size: 11px; margin-bottom: 12px; }
+  #connector-frame .termtable { width: 60%; border-collapse: collapse; font-size: inherit; margin-bottom: 12px; }
   #connector-frame .termtable th { background: #ccc; border: 1px solid #999; padding: 4px 6px; }
   #connector-frame .termtable td { border: 1px solid #999; padding: 3px 6px; }
   #connector-frame .pigtail-block { display: flex; gap: 12px; border: 1px solid #999; padding: 8px; margin-bottom: 8px; align-items: flex-start; }
   #connector-frame .pigtail-img { flex: 0 0 140px; }
   #connector-frame .pigtail-img img { max-width: 140px; max-height: 120px; }
   #connector-frame .pigtail-kit-header { font-weight: bold; margin-bottom: 4px; }
-  #connector-frame .pigtail-info { flex: 1; font-size: 11px; line-height: 1.8; }
+  #connector-frame .pigtail-info { flex: 1; font-size: inherit; line-height: 1.8; }
 
   /* Welcome screen */
   #welcome {
@@ -596,7 +637,7 @@
 
   .welcome-warning {
     max-width: 480px;
-    font-size: 11px;
+    font-size: inherit;
     color: var(--muted);
     text-align: center;
     line-height: 1.5;
@@ -710,6 +751,7 @@
       color: #d4d4d8 !important;
     }
     .workshop-content {
+    .workshop-svg { filter: invert(0.71); }
       color: #d4d4d8;
     }
     .workshop-content h1,
@@ -792,7 +834,7 @@
   }
 
   #connector-modal-desc {
-    font-size: 11px;
+    font-size: inherit;
     color: var(--muted);
     margin-bottom: 4px;
     line-height: 1.4;
@@ -822,7 +864,7 @@
     padding: 9px 16px;
     border-radius: 6px;
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: inherit;
     cursor: pointer;
     border: 1px solid var(--border);
     background: var(--bg);
@@ -842,7 +884,7 @@
   .connector-modal-btn.primary:hover { background: #d44a17; }
 
   #connector-modal-spinner {
-    font-size: 11px;
+    font-size: inherit;
     color: var(--muted);
     font-family: var(--mono);
     display: none;
@@ -923,9 +965,80 @@
       fill: #1e1e1e !important;
       stroke: #e4e4e7 !important;
     }
+  /* ── Print ── */
+  @media print {
+    /* Hide chrome: sidebar, header, breadcrumb, zoom, search, page nav, welcome */
+    #sidebar, .resize-handle, header, #breadcrumb, #zoom-controls,
+    #search-results, #svg-pages, #welcome, #loading, .page-nav { display: none !important; }
+
+    /* Reset the fixed app layout to normal document flow */
+    html, body { height: auto !important; overflow: visible !important; }
+    .body { display: block !important; overflow: visible !important; }
+    #content { overflow: visible !important; }
+    #content-body {
+      overflow: visible !important;
+      position: static !important;
+    }
+    #content-frame, #svg-viewer, #connector-frame {
+      position: static !important;
+      overflow: visible !important;
+      height: auto !important;
+      zoom: 1 !important;
+    }
+
+    /* Force light colors for print */
+    #content-frame {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    #connector-frame {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    #connector-frame td, #connector-frame th {
+      color: #000 !important;
+      background: #fff !important;
+      border-color: #999 !important;
+    }
+    #connector-frame th {
+      background: #eee !important;
+    }
+
+    /* Don't break inside these elements */
+    .workshop-content img, .workshop-content table,
+    .workshop-content h1, .workshop-content h2, .workshop-content h3,
+    .workshop-content h4, .workshop-content h5,
+    #connector-frame table, #connector-frame img,
+    .workshop-svg object {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Keep headings with following content */
+    .workshop-content h1, .workshop-content h2, .workshop-content h3,
+    .workshop-content h4, .workshop-content h5 {
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    /* SVG wiring diagrams: reset pixel widths, fit to page */
+    #svg-viewer svg {
+      width: 100% !important;
+      min-width: 0 !important;
+      height: auto !important;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Undo dark-mode invert for print */
+    .workshop-svg, .connector-face-img {
+      filter: none !important;
+    }
+
+    /* Reasonable margins */
+    @page { margin: 0.5in; }
   }
 </style>
-
 </head>
 <body>
 
@@ -982,6 +1095,7 @@
     <div id="breadcrumb"><span class="bc-item">2025 Maverick Service Manual</span></div>
 
     <div id="content-body">
+      <div id="zoom-controls"><button onclick="contentZoom=Math.max(0.25,contentZoom-0.1);applyZoom();">−</button><span id="zoom-indicator">100%</span><button onclick="contentZoom=Math.min(4,contentZoom+0.1);applyZoom();">+</button></div>
       <div id="loading"><div class="spinner"></div></div>
 
       <div id="welcome">
@@ -1026,6 +1140,7 @@ const state = {
   searchIndex: [],
   docIdIndex: {},
   pathMapping: {},
+  reversePathMapping: {},
   currentSvgFiles: [],
   locationHighlight: null,
   locationHighlightOrigFill: null,
@@ -1098,6 +1213,7 @@ async function init() {
     state.wiringToc  = wiringResp.ok ? await wiringResp.json() : [];
     state.connectors = connResp.ok ? await connResp.json() : [];
     state.pathMapping = mappingResp.ok ? await mappingResp.json() : {};
+    buildReversePathMapping();
 
     buildDocIdIndex();
     buildWorkshopTree();
@@ -1119,6 +1235,22 @@ async function init() {
 // ── Path mapping ──
 function resolvePath(oldPath) {
   return state.pathMapping[oldPath] || oldPath;
+}
+
+// Reverse mapping: shortened path → original path (built at init)
+function buildReversePathMapping() {
+  state.reversePathMapping = {};
+  for (const [original, shortened] of Object.entries(state.pathMapping)) {
+    if (original !== shortened) {
+      state.reversePathMapping[shortened] = original;
+    }
+  }
+}
+
+// Given a resolved (possibly shortened) path, produce pretty breadcrumb string
+function prettyBreadcrumb(resolvedPath) {
+  const original = state.reversePathMapping[resolvedPath] || resolvedPath;
+  return original.replace(/\.html$/, '').replace(/\//g, ' › ');
 }
 
 
@@ -1409,6 +1541,7 @@ async function _loadWorkshopPage(path, breadcrumb, openBranches) {
     const pageFolder = path.split('/').slice(0, -1).join('/');
     if (pageFolder) {
       html = html.replace(/src="(?!http|\/|data:)([^"]+)"/g, (m, p1) => `src="${pageFolder}/${p1}"`);
+      html = html.replace(/data="(?!http|\/|data:)([^"]+\.svg)"/g, (m, p1) => `data="${pageFolder}/${p1}"`);
     }
     hideAll();
     const frame = document.getElementById('content-frame');
@@ -1657,7 +1790,7 @@ function restoreFromHash() {
     _loadConnector(conn, false).then(() => restoreScroll(savedState));
 
   } else {
-    const breadcrumb = path.replace('.html', '').replace(/\//g, ' › ');
+    const breadcrumb = prettyBreadcrumb(path);
     highlightLeafByPath(path);
     expandTreeToPath(path);
     _loadWorkshopPage(path, breadcrumb, false).then(() => restoreScroll(savedState));
@@ -1681,7 +1814,7 @@ function rewriteConnectorLinks(container) {
       el.style.textDecoration = 'underline';
       el.addEventListener('click', (e) => {
         e.preventDefault(); e.stopPropagation();
-        loadWorkshopPage({ dataset: { path, breadcrumb: path.replace('.html','').replace(/\//g,' › ') } });
+        loadWorkshopPage({ dataset: { path, breadcrumb: prettyBreadcrumb(path) } });
       });
     } else {
       el.removeAttribute('onclick');
@@ -1715,7 +1848,7 @@ function rewriteConnectorLinks(container) {
           a.style.color = '#1d4ed8';
           a.addEventListener('click', (e) => {
             e.preventDefault();
-            loadWorkshopPage({ dataset: { path, breadcrumb: path.replace('.html','').replace(/\//g,' › ') } });
+            loadWorkshopPage({ dataset: { path, breadcrumb: prettyBreadcrumb(path) } });
           });
         } else {
           a.addEventListener('click', (e) => e.preventDefault());
@@ -1740,7 +1873,7 @@ function rewriteConnectorLinks(container) {
       el.style.textDecoration = 'underline';
       el.addEventListener('click', (e) => {
         e.preventDefault(); e.stopPropagation();
-        loadWorkshopPage({ dataset: { path, breadcrumb: path.replace('.html','').replace(/\//g,' › ') } });
+        loadWorkshopPage({ dataset: { path, breadcrumb: prettyBreadcrumb(path) } });
       });
     } else {
       el.style.color = '#9ca3af';
@@ -1761,7 +1894,7 @@ function rewriteConnectorLinks(container) {
       el.style.textDecoration = 'underline';
       el.addEventListener('click', (e) => {
         e.preventDefault(); e.stopPropagation();
-        loadWorkshopPage({ dataset: { path, breadcrumb: path.replace('.html','').replace(/\//g,' › ') } });
+        loadWorkshopPage({ dataset: { path, breadcrumb: prettyBreadcrumb(path) } });
       });
     } else {
       el.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
@@ -2525,6 +2658,47 @@ document.addEventListener('mouseup', () => {
   resizing = false;
   document.body.style.userSelect = '';
   document.body.style.cursor = '';
+});
+
+// ── Cmd+scroll zoom on content frames ──
+let contentZoom = 1;
+function applyZoom() {
+  ['content-frame', 'connector-frame'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.zoom = contentZoom;
+  });
+  // SVG wiring: set explicit pixel width on SVGs so zoom works
+  document.querySelectorAll('#svg-content svg').forEach(svg => {
+    const vb = svg.getAttribute('viewBox');
+    if (vb) {
+      const w = parseFloat(vb.split(/\s+/)[2]) || 1100;
+      svg.style.width = (w * contentZoom) + 'px';
+      svg.style.height = 'auto';
+    }
+  });
+  const indicator = document.getElementById('zoom-indicator');
+  if (indicator) {
+    indicator.textContent = Math.round(contentZoom * 100) + '%';
+    indicator.style.opacity = '1';
+    clearTimeout(indicator._fade);
+    indicator._fade = setTimeout(() => indicator.style.opacity = '0', 1200);
+  }
+}
+['content-frame', 'svg-viewer', 'connector-frame'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('wheel', (e) => {
+    if (!e.metaKey && !e.ctrlKey) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.05 : 0.05;
+    contentZoom = Math.max(0.25, Math.min(4, contentZoom + delta));
+    applyZoom();
+  }, { passive: false });
+  el.addEventListener('wheel', (e) => {
+    if (!e.altKey) return;
+    e.preventDefault();
+    el.scrollLeft += e.deltaY;
+  }, { passive: false });
 });
 
 // ── Start ──
