@@ -169,6 +169,14 @@ The viewer features include:
 
 The viewer works entirely offline — no internet connection required after setup.
 
+You can launch the server again after build_viewer.py runs once with:
+
+```
+python3 /path/to/repo/clone/serve.py /output/directory/
+```
+
+The server is reachable at 127.0.0.1:8000 in a web browser. Change port 8000 by editing serve.py in your prefered text editor.
+
 #### Workshop illustration SVGs
 
 Workshop pages with interactive hotspot illustrations reference SVGs hosted on Ford's CDN. During scraping, these are automatically downloaded, CSS-patched (text labels made visible, callout overlays hidden), and saved alongside the HTML files. The HTML is rewritten to use local `<object>` tags — no internet connection needed to view illustrations.
