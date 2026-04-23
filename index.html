@@ -1480,9 +1480,21 @@ function hideAll() {
 
 function setBreadcrumb(parts) {
   const bc = document.getElementById('breadcrumb');
-  bc.innerHTML = parts.map((p, i) =>
-    `<span class="bc-item ${i === parts.length - 1 ? 'current' : ''}">${p}</span>`
-  ).join('<span class="bc-sep"> › </span>');
+  bc.textContent = '';
+
+  parts.forEach((p, i) => {
+    const item = document.createElement('span');
+    item.className = `bc-item ${i === parts.length - 1 ? 'current' : ''}`;
+    item.textContent = p;
+    bc.appendChild(item);
+
+    if (i < parts.length - 1) {
+      const sep = document.createElement('span');
+      sep.className = 'bc-sep';
+      sep.textContent = ' › ';
+      bc.appendChild(sep);
+    }
+  });
 }
 
 // ── Sidebar highlight helpers ──
