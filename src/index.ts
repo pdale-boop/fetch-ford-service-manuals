@@ -123,13 +123,21 @@ async function run({
         console.error(expiryDate);
       }
       process.exit(1);
-    } else if (
-      !cookieTestingPage
-        .url()
-        .startsWith("https://www.fordtechservice.dealerconnection.com")
-    ) {
-      console.error("Failed to log in with the provided cookies.");
-      process.exit(1);
+    } else {
+      const currentUrl = cookieTestingPage.url();
+      try {
+        const parsedUrl = new URL(currentUrl);
+        if (
+          parsedUrl.protocol !== "https:" ||
+          parsedUrl.hostname !== "www.fordtechservice.dealerconnection.com"
+        ) {
+          console.error("Failed to log in with the provided cookies.");
+          process.exit(1);
+        }
+      } catch {
+        console.error("Failed to log in with the provided cookies.");
+        process.exit(1);
+      }
     }
     console.log("ok!");
     await cookieTestingPage.close();
