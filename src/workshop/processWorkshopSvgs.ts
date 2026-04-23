@@ -14,7 +14,6 @@ import { promisify } from "util";
 /** Decode common HTML entities without external dependencies. */
 function decodeHtmlEntities(str: string): string {
   return str
-    .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
@@ -22,7 +21,8 @@ function decodeHtmlEntities(str: string): string {
     .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
       String.fromCharCode(parseInt(hex, 16))
     )
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)));
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
+    .replace(/&amp;/g, "&");
 }
 
 const execFileAsync = promisify(execFile);
