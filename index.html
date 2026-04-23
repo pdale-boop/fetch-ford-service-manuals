@@ -1557,7 +1557,14 @@ async function _loadWorkshopPage(path, breadcrumb, openBranches) {
     hideAll();
     const frame = document.getElementById('content-frame');
     frame.style.display = 'block';
-    frame.innerHTML = `<div class="workshop-content"><p style="color:red">Error loading: ${path}</p></div>`;
+    frame.innerHTML = '';
+    const errorWrapper = document.createElement('div');
+    errorWrapper.className = 'workshop-content';
+    const errorText = document.createElement('p');
+    errorText.style.color = 'red';
+    errorText.textContent = `Error loading: ${path}`;
+    errorWrapper.appendChild(errorText);
+    frame.appendChild(errorWrapper);
   }
   hideLoading();
 }
