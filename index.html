@@ -1875,7 +1875,7 @@ function rewriteConnectorLinks(container) {
       }
       return;
     }
-    if (href.startsWith('javascript:') || href === '#') {
+    if (href.startsWith('javascript:') || href.startsWith('data:') || href.startsWith('vbscript:') || href === '#') {
       a.addEventListener('click', (e) => e.preventDefault());
     }
   });
